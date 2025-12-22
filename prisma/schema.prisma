@@ -19,4 +19,21 @@ model User{
   password String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  posts UserPosts[]
+}
+
+model UserPosts{
+  id Int @id @default(autoincrement())
+  userPostId Int
+
+  title String
+  content String
+  createdAt DateTime
+
+  authorUsername  String
+  author  User  @relation(fields: [authorUsername], references: [username])
+
+  @@unique([authorUsername, userPostId])
+
 }
