@@ -5,35 +5,45 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 model User{
   id Int @id @default(autoincrement())
   username String @unique
   password String
+  email String
+  role Role @default(USER)
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  lastLogin DateTime?
 
-  posts UserPosts[]
+  workflows UserWorkflows[]
 }
 
-model UserPosts{
-  id Int @id @default(autoincrement())
-  userPostId Int
+model UserWorkflows{
+  id  Int @id @default(autoincrement())
+  userId  Int
 
-  title String
-  content String
-  createdAt DateTime
+  name String
+  trigger String
+  actions String
+  isActive Boolean @default(false)
 
-  authorUsername  String
-  author  User  @relation(fields: [authorUsername], references: [username])
-
-  @@unique([authorUsername, userPostId])
+  createdAt DateTime @default(now())
+  lastRun DateTime?
+  runCount Int @default(0)
+  
+  author  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
 }
