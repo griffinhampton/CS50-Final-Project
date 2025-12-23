@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "../globals.css";
-
+import EntryBox from "@/components/layouts/entrybox";
 
 
 export const metadata: Metadata = {
@@ -14,6 +14,10 @@ export default function AuthLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black"> {children} </div>
+    <div className="flex min-w-screen rounded-lg shadow-lg: items-center justify-center">
+          <div>      
+            {children}
+          </div>
+       </div>
   );
 }

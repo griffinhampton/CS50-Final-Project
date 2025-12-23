@@ -31,6 +31,18 @@ relative to each other, and items-center esque
 commands control how the items are placed relative to 
 nothing
 
+class="md:block hidden" hides certain elements on diff
+resolutions
+
+you can put any styles you want behind different
+resolutions, like md:bg-amber-700 makes the screen
+amber, the larger size is always applied unless
+you put max- in front of it
+like max-sm 
+
+do not think of sm as "on small screens" think
+of them as "at the small breakpoint"
+
 Position - where an element appears relative to 
 the container/viewport, fixed, absolute, relative,
 sticky (makes it normal until it is scrolled past),
@@ -38,8 +50,10 @@ sticky (makes it normal until it is scrolled past),
 */
 export default async function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 text-black font-sans dark:bg-black dark:text-zinc-50">
-      <p>Hello, world</p>
-    </div>
+    <main className="pt-16 bg-zinc-50 dark:bg-black text-black dark:text-zinc-50">
+      <div className="min-h-[calc(100vh-64px)] grid place-items-center">
+        <p className="font-sans">Hello, world</p>
+      </div>
+    </main>
   );
 }
