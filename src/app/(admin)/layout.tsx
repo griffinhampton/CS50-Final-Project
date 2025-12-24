@@ -46,7 +46,7 @@ export default function AdminLayout({
 		}`;
 	};
 	return (
-	<div className="pt-16 min-h-screen bg-zinc-50 dark:bg-black">
+	<div className="pt-16 h-screen bg-zinc-50 dark:bg-black overflow-hidden">
 		<button
 			type="button"
 			onClick={() => setIsSidebarVisible(true)}
@@ -61,14 +61,14 @@ export default function AdminLayout({
 			<ChevronRight className="w-5 h-5" />
 		</button>
 
-	  <div className="flex">
+	  <div className="flex h-full">
 		<div
-			className={`relative overflow-hidden transition-[width] duration-200 ease-in-out ${
+			className={`relative h-full overflow-hidden transition-[width] duration-200 ease-in-out ${
 				isSidebarVisible ? "w-64" : "w-0"
 			}`}
 		>
 			<aside
-				className={`w-64 min-h-[calc(100vh-64px)] bg-white dark:bg-black p-4 transition-all duration-200 ease-in-out ${
+				className={`w-64 h-full overflow-y-auto bg-white dark:bg-black p-4 transition-all duration-200 ease-in-out ${
 					isSidebarVisible
 						? "border-r border-zinc-200 dark:border-zinc-800 translate-x-0 opacity-100"
 						: "-translate-x-full opacity-0"
@@ -151,7 +151,7 @@ export default function AdminLayout({
 			</aside>
 		</div>
 
-		<main className="flex-1 p-6">{children}</main>
+		<main className="flex-1 h-full overflow-y-auto overflow-x-hidden p-6">{children}</main>
 	  </div>
 	</div>
   );

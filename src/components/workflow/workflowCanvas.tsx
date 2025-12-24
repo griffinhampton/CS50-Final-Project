@@ -22,8 +22,6 @@ const initialNodes: Node [] = [
         data: { label: "Start" }, 
         position: {x:0, y:0 },
         style: { 
-            background: '#fff',
-            border: '2px solid #3b82f6',
             borderRadius: '8px',
             padding: '10px',
             fontSize: '14px',
@@ -36,8 +34,6 @@ const initialNodes: Node [] = [
         data: { label: "Task A" }, 
         position: {x:0, y:0 },
         style: { 
-            background: '#fff',
-            border: '2px solid #3b82f6',
             borderRadius: '8px',
             padding: '10px',
             fontSize: '14px',
@@ -50,8 +46,6 @@ const initialNodes: Node [] = [
         data: { label: "Task B" }, 
         position: {x:0, y:0 },
         style: { 
-            background: '#fff',
-            border: '2px solid #3b82f6',
             borderRadius: '8px',
             padding: '10px',
             fontSize: '14px',
@@ -62,13 +56,13 @@ const initialNodes: Node [] = [
 ];
 
 const initialEdges: Edge[] = [
-    {id:"e1-2", source: "1", target: "2", animated: true, style: { stroke: '#3b82f6' }},
-    {id:"e2-3", source: "2", target: "3", animated: true, style: { stroke: '#3b82f6' }}
+    {id:"e1-2", source: "1", target: "2", animated: true},
+    {id:"e2-3", source: "2", target: "3", animated: true}
 ];
 
 export default function WorkflowCanvas() {
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-    const [edges, , onEdgesChange] = useEdgesState(initialEdges);
+    const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
     const [activeNodeId, setActiveNodeId] = useState<string | null>(null);
     const { resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
@@ -117,9 +111,41 @@ export default function WorkflowCanvas() {
     layout();
     }, [nodes.length, edges.length, setNodes]);
 
+    const isDark = resolvedTheme === 'dark';
+
+    useEffect(() => {
+        if (!mounted) return;
+
+        const nodeBg = isDark ? "#18181b" : "#ffffff";
+        const nodeFg = isDark ? "#f4f4f5" : "#0f172a";
+        const nodeBorder = isDark ? "2px solid #60a5fa" : "2px solid #3b82f6";
+        const edgeStroke = isDark ? "#a1a1aa" : "#3b82f6";
+
+        setNodes((nds) =>
+            nds.map((n) => ({
+                ...n,
+                style: {
+                    ...(n.style ?? {}),
+                    background: nodeBg,
+                    color: nodeFg,
+                    border: nodeBorder,
+                },
+            })),
+        );
+
+        setEdges((eds) =>
+            eds.map((e) => ({
+                ...e,
+                style: {
+                    ...(e.style ?? {}),
+                    stroke: edgeStroke,
+                },
+            })),
+        );
+    }, [isDark, mounted, setEdges, setNodes]);
+
     if (!mounted) return null;
 
-    const isDark = resolvedTheme === 'dark';
     const activeNode = activeNodeId ? nodes.find((n) => n.id === activeNodeId) : undefined;
     const activeLabel = activeNode ? String((activeNode.data as any)?.label ?? activeNode.id) : "";
 
@@ -136,9 +162,10 @@ export default function WorkflowCanvas() {
                 onPaneClick={() => setActiveNodeId(null)}
                 onNodeClick={(_, node) => setActiveNodeId(node.id)}
                 onNodeDragStart={(_, node) => setActiveNodeId(node.id)}
-                fitViewOptions={{ padding: 0.25 }}
+                fitViewOptions={{ padding: 0.6 }}
+                maxZoom={1}
             >
-                <Controls />
+                <Controls className="bg-white/95 border border-zinc-200 shadow-sm dark:bg-zinc-900/90 dark:border-zinc-700" />
                 <Background 
                     gap={16} 
                     color={isDark ? "#ffffff" : "#a1a1aa"}
