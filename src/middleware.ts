@@ -1,28 +1,31 @@
 import { NextResponse } from 'next/server'
 import { NextRequest } from 'next/server'
-import { isAuthenticated } from '@lib/auth'
+import { getSessionUser } from '@lib/auth'
 
-export function middleware(request: NextRequest) {
-    if (!isAuthenticated(request)){
-        return Response.json(
-            { success: false, message: 'authentication failed '},
-            { status: 401}
-        )
-    }
-    if (request.nextUrl.pathname.startsWith('/dashboard')) {
-        return NextResponse.rewrite(new URL('/dashboard/user', request.url))
+export async function middleware(request: NextRequest) {
+    const user = await getSessionUser(request);
+    if (!user) {
+        return NextResponse.redirect(new URL('/login', request.url))
     }
 
-    return NextResponse.redirect(new URL('/login', request.url))
+    const pathname = request.nextUrl.pathname;
+    const isAdminRoute = pathname.startsWith('/admin') || pathname.startsWith('/monitoring');
+    if (isAdminRoute && user.role !== 'ADMIN') {
+        return NextResponse.redirect(new URL('/dashboard', request.url))
+    }
+    
+    // User is authenticated, allow the request to proceed
+    return NextResponse.next()
 }
 
 export const config = {
     matcher: ['/analytics/:path*',
          '/dashboard/:path*',
          '/profile/:path*',
-         '/analytics/:path*',
          '/integrations/:path*',
-         '/profile/:path*',
          '/workflows/:path*',
-         '/emails/:path*']
+         '/emails/:path*',
+         '/admin/:path*',
+         '/monitoring/:path*',
+         '/settings/:path*']
 }

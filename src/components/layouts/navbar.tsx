@@ -1,15 +1,68 @@
 "use client"
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Image from "next/image";
 
 export default function Navbar() {
-  const isLoggedIn = false;
-  const isAdmin = false;
-
+  const [user, setUser] = useState<{ username: string; role: string } | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+
+  // Check for session on mount + after navigations (Navbar persists across routes)
+  useEffect(() => {
+    let cancelled = false;
+    const controller = new AbortController();
+
+    const checkSession = async () => {
+      try {
+        const res = await fetch('/api/session', {
+          cache: 'no-store',
+          signal: controller.signal,
+        });
+
+        if (!res.ok) {
+          if (!cancelled) {
+            setUser(null);
+            setIsLoggedIn(false);
+          }
+          return;
+        }
+
+        const data = await res.json();
+        if (!cancelled) {
+          setUser(data.user ?? null);
+          setIsLoggedIn(true);
+        }
+      } catch {
+        if (!cancelled) {
+          setUser(null);
+          setIsLoggedIn(false);
+        }
+      }
+    };
+
+    checkSession();
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, [pathname]);
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/logout', { method: 'POST' });
+      setUser(null);
+      setIsLoggedIn(false);
+      router.push('/');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
+  const isAdmin = user?.role === 'ADMIN';
 
   const {theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -17,8 +70,8 @@ export default function Navbar() {
 
   const getLinkClass = (path: string) => {
     const baseStyle = "transition-colors duration-200";
-    const activeStyle = "text-white font-bold"; 
-    const inactiveStyle = "text-gray-400 hover:text-gray-200"; 
+    const activeStyle = "text-black dark:text-white font-bold";
+    const inactiveStyle = "text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-zinc-200";
 
     return pathname === path 
       ? `${baseStyle} ${activeStyle}` 
@@ -30,21 +83,25 @@ export default function Navbar() {
 
   return (
   
-    <nav className="fixed top-0 left-0 right-0 flex items-center justify-between p-4 bg-black text-white border-b border-zinc-800">
-      <div className="text-xl font-bold">
-        <Link href="/">Home</Link>
+    <nav className="fixed top-0 left-0 right-0 flex items-center justify-between p-4 bg-white text-black dark:bg-black dark:text-white border-b border-zinc-200 dark:border-zinc-800">
+      <div className="text-xl font-bold text-black dark:text-white">
+        <Link href="/" onClick={handleLogout}>Home</Link>
       </div>
-      <div className="flex gap-6">
-        <Link href="/" className={getLinkClass('/')}>
-          Home
-        </Link>
+      <div className="flex gap-6 items-center">
+        {isLoggedIn && (
+          <>
+            <Link href="/dashboard" className={getLinkClass('/dashboard')}>
+              Dashboard
+            </Link>
+            <Link href="/workflows" className={getLinkClass('/workflows')}>
+              Workflows
+            </Link>
+          </>
+        )}
         {isLoggedIn && isAdmin && (
           <>
             <Link href="/admin" className={getLinkClass('/admin')}>
-              Admin Dashboard
-            </Link>
-            <Link href="/admin/analytics" className={getLinkClass('/admin/analytics')}>
-              Analytics
+              Admin
             </Link>
           </>
         )}
@@ -71,17 +128,30 @@ export default function Navbar() {
         */}
         {!isLoggedIn ? (
           <>
-        <Link href="/login" className={getLinkClass('/login')}>
-          Log in
-        </Link>
-        <Link href="/register" className={getLinkClass('/register')}>
-          Register
-        </Link>
-        </>
+            <Link href="/" className={getLinkClass('/')}>
+            Home
+            </Link>
+            <Link href="/login" className={getLinkClass('/login')}>
+              Log in
+            </Link>
+            <Link href="/register" className={getLinkClass('/register')}>
+              Register
+            </Link>
+          </>
         ) : (
-          <Link href="/profile" className={getLinkClass('/profile')}>
-          Register
-        </Link>
+          <>
+            {user && (
+              <Link href="/profile" className={getLinkClass('/profile')}>
+              {user.username}
+            </Link>
+            )}
+            <button
+              onClick={handleLogout}
+              className="transition-colors duration-200 cursor-pointer text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-zinc-200"
+            >
+              Logout
+            </button>
+          </>
         )}
       </div>
     </nav>

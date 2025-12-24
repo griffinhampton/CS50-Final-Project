@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import EntryBox from "@/components/layouts/entrybox";
 import { registerSchema, type RegisterInput } from "@/lib/utils";
 //import { register } from "@/actions/auth";
@@ -40,9 +41,11 @@ export function processRegisterInput(registerInput: RegisterInput): string{
 
 
 export default function RegisterPage() {
+  const router = useRouter();
+  
   const fields = [
     { name: "username", label: "Username" },
-    { name: "email", label: "Email", type: "email", autoComplete: "email" },
+    { name: "email", label: "Email (optional)", type: "email", autoComplete: "email" },
     { name: "password", label: "Password", type: "password", autoComplete: "new-password" },
   ];
 
@@ -52,7 +55,37 @@ export default function RegisterPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(values),
     });
-    console.log('successful addition to the DB')
+    
+    if (res.ok) {
+      console.log('successful addition to the DB');
+      router.push("/dashboard");
+    } else {
+      let errorBody: any = null;
+      try {
+        errorBody = await res.json();
+      } catch {
+        // ignore
+      }
+
+      // Zod validation errors from API (400)
+      const fieldErrors = errorBody?.errors?.fieldErrors;
+      if (res.status === 400 && fieldErrors && typeof fieldErrors === "object") {
+        const mapped: Record<string, string> = {};
+        for (const [key, value] of Object.entries(fieldErrors)) {
+          if (Array.isArray(value) && value.length) mapped[key] = String(value[0]);
+        }
+        if (Object.keys(mapped).length) return { ok: false, fieldErrors: mapped };
+      }
+
+      // Username or email already exists (409)
+      if (res.status === 409) {
+        const message = "Account already exists";
+        // API doesn't specify which one; show it on both so the user sees it.
+        return { ok: false, fieldErrors: { username: message, email: message } };
+      }
+
+      return { ok: false, fieldErrors: { username: errorBody?.message ?? "Registration failed" } };
+    }
   }
 
   return <EntryBox schema={registerSchema} fields={fields} onSubmit={onSubmit} />;

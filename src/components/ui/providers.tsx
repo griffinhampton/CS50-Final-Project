@@ -3,15 +3,16 @@
 import { ThemeProvider } from "next-themes";
 import React from "react";
 
-export function Providers({children} : {children: React.ReactNode}){
-    return (
-        <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-        >
-            {children}
-            </ThemeProvider>
-    );
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <ThemeProvider
+      attribute="class"
+      storageKey="cs50-theme"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      {children}
+    </ThemeProvider>
+  );
 }

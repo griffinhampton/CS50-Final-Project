@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className = "min-h-screen min-w-screen bg-zinc-50 dark:bg-black dark:text-zinc-50 text-black">
+      <body className = "min-h-screen min-w-screen bg-zinc-50 dark:bg-black text-black dark:text-zinc-50">
         <Providers>
           <Navbar />
           {children}

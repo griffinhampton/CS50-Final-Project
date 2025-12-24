@@ -1,13 +1,32 @@
 @import "tailwindcss";
+@import "@xyflow/react/dist/style.css";
+/* Make `dark:` respond to `.dark` from next-themes (not prefers-color-scheme). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+html {
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
+  font-family: Arial, Helvetica, sans-serif; /* keep only what shouldn't override Tailwind utils */
+}
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
+/* If you want system-following behavior, next-themes will add/remove `.dark` on <html>. */
+:root.dark,
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
+
 @theme {
   --color-defaultLight: #ededed;
-  --color-defaultDark: #0a0a0a; 
+  --color-defaultDark: #0a0a0a;
 }
 
 @theme inline {
@@ -17,30 +36,13 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 @layer base {
-  h1 { @apply text-5xl; };
-  p { @apply text-shadow-2xs; };
+  h1 { @apply text-3xl font-bold; }
+  h2 { @apply text-3xl font-light; }
+  h3 { @apply text-lg; }
+  p { @apply text-base font-normal; }
 }
 
-:root.dark,
-.dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-}
-@utility flex-center
-{
+@utility flex-center {
   @apply flex justify-center items-center;
 }

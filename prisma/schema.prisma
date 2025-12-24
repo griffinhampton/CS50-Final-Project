@@ -11,7 +11,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url = env("DATABASE_URL")
 }
 
 enum Role {
@@ -23,12 +22,24 @@ model User{
   id Int @id @default(autoincrement())
   username String @unique
   password String
-  email String
+  email String?
   role Role @default(USER)
   createdAt DateTime @default(now())
   lastLogin DateTime?
 
   workflows UserWorkflows[]
+  sessions Session[]
+}
+
+model Session {
+  id        Int      @id @default(autoincrement())
+  tokenHash String   @unique
+  userId    Int
+  createdAt DateTime @default(now())
+  lastUsedAt DateTime @default(now())
+  expiresAt DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserWorkflows{
