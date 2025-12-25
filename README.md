@@ -2,6 +2,30 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+## Email Provider OAuth (env vars)
+
+These routes expect OAuth credentials to be present at runtime:
+
+- Microsoft connect: `/api/connect/microsoft` → callback: `/api/email/callback/microsoft`
+	- `MICROSOFT_CLIENT_ID`
+	- `MICROSOFT_CLIENT_SECRET`
+	- `MICROSOFT_REDIRECT_URI`
+
+- Gmail (Google) connect: `/api/connect/gmail` → callback: `/api/email/callback/gmail`
+	- `GOOGLE_CLIENT_ID`
+	- `GOOGLE_CLIENT_SECRET`
+	- `GOOGLE_REDIRECT_URI`
+
+- Yahoo connect: `/api/connect/yahoo` → callback: `/api/email/callback/yahoo`
+	- `YAHOO_CLIENT_ID`
+	- `YAHOO_CLIENT_SECRET`
+	- `YAHOO_REDIRECT_URI`
+
+Token encryption:
+
+- `OAUTH_TOKEN_ENC_KEY` (base64-encoded 32 bytes)
+
+
 First, run the development server:
 
 ```bash

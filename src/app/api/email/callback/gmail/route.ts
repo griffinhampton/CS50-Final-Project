@@ -1,9 +1,111 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { cookies } from "next/headers";
+import { prisma } from "@/lib/prisma";
+import { encryptString } from "@/actions/encrypt";
+import { getSessionUser } from "@/lib/auth";
+import { EmailProvider } from "@/generated/prisma";
 
-export async function GET(_req: NextRequest) {
-	return NextResponse.json(
-		{ message: "Gmail OAuth callback is not implemented yet" },
-		{ status: 501 }
-	);
+export async function GET(req: NextRequest) {
+	const user = await getSessionUser(req);
+	if (!user) return NextResponse.redirect(new URL("/login", req.url));
+
+	const url = new URL(req.url);
+	const code = url.searchParams.get("code");
+	const state = url.searchParams.get("state");
+	const error = url.searchParams.get("error");
+
+	if (error) {
+		return NextResponse.redirect(new URL(`/dashboard/emails?connected=gmail&error=${encodeURIComponent(error)}`, req.url));
+	}
+
+	const jar = await cookies();
+	const expectedState = jar.get("google_oauth_state")?.value;
+	jar.delete("google_oauth_state");
+
+	if (!code || !state || !expectedState || state !== expectedState) {
+		return NextResponse.json({ message: "Invalid OAuth state/code" }, { status: 400 });
+	}
+
+	const clientId = process.env.GOOGLE_CLIENT_ID;
+	const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+	const redirectUri = process.env.GOOGLE_REDIRECT_URI;
+	if (!clientId || !clientSecret || !redirectUri) {
+		return NextResponse.json({ message: "Missing Google OAuth env vars" }, { status: 500 });
+	}
+
+	const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+		method: "POST",
+		headers: { "Content-Type": "application/x-www-form-urlencoded" },
+		body: new URLSearchParams({
+			code,
+			client_id: clientId,
+			client_secret: clientSecret,
+			redirect_uri: redirectUri,
+			grant_type: "authorization_code",
+		}),
+		cache: "no-store",
+	});
+
+	if (!tokenRes.ok) {
+		const text = await tokenRes.text().catch(() => "");
+		return NextResponse.json({ message: "Token exchange failed", detail: text }, { status: 502 });
+	}
+
+	const tokenJson: {
+		access_token: string;
+		refresh_token?: string;
+		expires_in?: number;
+		id_token?: string;
+		token_type?: string;
+		scope?: string;
+	} = await tokenRes.json();
+
+	const expiresAt =
+		typeof tokenJson.expires_in === "number"
+			? new Date(Date.now() + tokenJson.expires_in * 1000)
+			: null;
+
+	let providerAccountId = `user:${user.id}`;
+	let email: string | null = null;
+
+	try {
+		const userinfoRes = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
+			headers: { Authorization: `Bearer ${tokenJson.access_token}` },
+			cache: "no-store",
+		});
+		if (userinfoRes.ok) {
+			const userinfo: { sub?: string; email?: string | null } = await userinfoRes.json();
+			if (userinfo.sub) providerAccountId = userinfo.sub;
+			email = userinfo.email ?? null;
+		}
+	} catch {
+		// ignore
+	}
+
+	await prisma.connectedEmailAccount.upsert({
+		where: {
+			provider_providerAccountId: {
+				provider: EmailProvider.GOOGLE,
+				providerAccountId,
+			},
+		},
+		create: {
+			userId: user.id,
+			provider: EmailProvider.GOOGLE,
+			providerAccountId,
+			email,
+			accessTokenEnc: encryptString(tokenJson.access_token),
+			refreshTokenEnc: tokenJson.refresh_token ? encryptString(tokenJson.refresh_token) : null,
+			expiresAt,
+		},
+		update: {
+			accessTokenEnc: encryptString(tokenJson.access_token),
+			refreshTokenEnc: tokenJson.refresh_token ? encryptString(tokenJson.refresh_token) : undefined,
+			expiresAt,
+			email: email ?? undefined,
+		},
+	});
+
+	return NextResponse.redirect(new URL("/dashboard/emails?connected=gmail", req.url));
 }
 
