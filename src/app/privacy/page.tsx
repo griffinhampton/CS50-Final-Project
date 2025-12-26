@@ -2,7 +2,7 @@ export default function PrivacyPolicyPage() {
 	return (
 		<div className="mx-auto w-full max-w-4xl space-y-6 p-6">
 			<h1 className="text-3xl font-bold">Privacy Policy</h1>
-			<div className="text-sm text-zinc-600 dark:text-zinc-300">Last updated: [DATE]</div>
+			<div className="text-sm text-zinc-600 dark:text-zinc-300">Last updated: 12/26/2025</div>
 
 			<section className="space-y-3">
 				<h2 className="text-xl font-semibold">1. Introduction</h2>
