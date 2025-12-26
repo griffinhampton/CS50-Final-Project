@@ -12,12 +12,15 @@ export async function GET() {
     const cookieStore = await cookies();
     const sessionToken = cookieStore.get(getSessionCookieName())?.value;
 
+    console.log('[SESSION DEBUG] Cookie value:', sessionToken);
+
     if (!sessionToken) {
       return NextResponse.json({ user: null }, { status: 401 });
     }
 
     const now = new Date();
     const tokenHash = hashSessionToken(sessionToken);
+    console.log('[SESSION DEBUG] Token hash:', tokenHash);
     const session = await prisma.session.findUnique({
       where: { tokenHash },
       select: {
@@ -34,7 +37,14 @@ export async function GET() {
       },
     });
 
+    console.log('[SESSION DEBUG] DB session:', session);
+
     if (!session || session.expiresAt <= now) {
+      if (!session) {
+        console.log('[SESSION DEBUG] No session found for hash');
+      } else if (session.expiresAt <= now) {
+        console.log('[SESSION DEBUG] Session expired at', session.expiresAt, 'now is', now);
+      }
       // Best-effort cleanup
       if (session) {
         await prisma.session.delete({ where: { id: session.id } }).catch(() => {});
