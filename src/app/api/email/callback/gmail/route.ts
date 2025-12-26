@@ -23,7 +23,18 @@ export async function GET(req: NextRequest) {
 	jar.delete("google_oauth_state");
 
 	if (!code || !state || !expectedState || state !== expectedState) {
-		return NextResponse.json({ message: "Invalid OAuth state/code" }, { status: 400 });
+		// Common causes:
+		// - user refreshes the callback URL (we delete the cookie after first attempt)
+		// - multiple OAuth attempts in parallel
+		// - domain/redirect mismatch so the state cookie isn't present
+		return NextResponse.redirect(
+			new URL(
+				`/dashboard/emails?connected=gmail&error=${encodeURIComponent(
+					!code || !state ? "missing_oauth_params" : "oauth_state_mismatch",
+				)}`,
+				req.url,
+			),
+		);
 	}
 
 	const clientId = process.env.GOOGLE_CLIENT_ID ?? process.env.GMAIL_CLIENT_ID;
