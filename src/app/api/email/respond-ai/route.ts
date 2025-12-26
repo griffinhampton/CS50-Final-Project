@@ -4,6 +4,25 @@ import { getSessionUser } from "@/lib/auth";
 import { openAIChatCompletion } from "@/services/ai/openai";
 import { gmailExtractTextContent, gmailGetMessage, gmailSendTextEmail } from "@/services/email/google";
 
+function sanitizeReplyText(input: string): string {
+	if (!input) return input;
+	// Normalize newlines
+	let t = input.replace(/\r\n/g, "\n");
+	// Remove fenced code blocks entirely (they often wrap JSON or examples)
+	t = t.replace(/```[\s\S]*?```/g, "");
+	// Remove stray backtick fences
+	t = t.replace(/`{3,}/g, "");
+	// Remove wrapping quotes if the model returned a quoted string
+	t = t.replace(/^\s*"([\s\S]*)"\s*$/, "$1").replace(/^\s*'([\s\S]*)'\s*$/, "$1");
+	// Trim trailing spaces on each line
+	t = t.split("\n").map((l) => l.replace(/[ \t]+$/g, "")).join("\n");
+	// Collapse excessive blank lines to a maximum of one blank line
+	t = t.replace(/\n{3,}/g, "\n\n");
+	// Trim leading/trailing whitespace
+	t = t.trim();
+	return t;
+}
+
 function headerValue(headers: Array<{ name: string; value: string }> | undefined, name: string): string {
 	const target = name.toLowerCase();
 	if (!Array.isArray(headers)) return "";
@@ -56,7 +75,7 @@ export async function POST(req: NextRequest) {
 	const original = gmailExtractTextContent(msg);
 	const instruction = typeof body.instruction === "string" ? body.instruction.trim() : "";
 
-	const replyBody = await openAIChatCompletion({
+	const replyBodyRaw = await openAIChatCompletion({
 		apiKey,
 		baseUrl,
 		model,
@@ -76,6 +95,7 @@ export async function POST(req: NextRequest) {
 		],
 	});
 
+	const replyBody = sanitizeReplyText(replyBodyRaw ?? "");
 	if (!replyBody) return NextResponse.json({ message: "AI returned empty reply" }, { status: 500 });
 
 	const replySubject = subject.toLowerCase().startsWith("re:") ? subject : `Re: ${subject}`;
