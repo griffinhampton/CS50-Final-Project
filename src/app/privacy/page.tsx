@@ -1,0 +1,116 @@
+export default function PrivacyPolicyPage() {
+	return (
+		<div className="mx-auto w-full max-w-4xl space-y-6 p-6">
+			<h1 className="text-3xl font-bold">Privacy Policy</h1>
+			<div className="text-sm text-zinc-600 dark:text-zinc-300">Last updated: [DATE]</div>
+
+			<section className="space-y-3">
+				<h2 className="text-xl font-semibold">1. Introduction</h2>
+				<p>
+					This Privacy Policy describes how [Your App Name] ("we", "our", or "us") collects, uses, and protects
+					 user information when you use our application and services hosted on Google Cloud Platform.
+				</p>
+				<p>
+					This project was built as a personal/student project. We do not use your information for advertising.
+				</p>
+			</section>
+
+			<section className="space-y-3">
+				<h2 className="text-xl font-semibold">2. Information We Collect</h2>
+				<p>We may collect the following information:</p>
+				<ul className="list-disc space-y-2 pl-6">
+					<li>Personal information: such as name and email address (if provided)</li>
+					<li>Google account data: only when explicitly authorized by the user</li>
+					<li>Usage data: including logs, device information, and interaction data</li>
+					<li>Content data: only if required for core app functionality</li>
+				</ul>
+				<p>We do not collect information unrelated to the app’s stated purpose.</p>
+			</section>
+
+			<section className="space-y-3">
+				<h2 className="text-xl font-semibold">3. How We Use Information</h2>
+				<p>We use collected information to:</p>
+				<ul className="list-disc space-y-2 pl-6">
+					<li>Provide and maintain app functionality</li>
+					<li>Authenticate users</li>
+					<li>Improve performance and reliability</li>
+					<li>Detect and prevent abuse or security issues</li>
+				</ul>
+			</section>
+
+			<section className="space-y-3">
+				<h2 className="text-xl font-semibold">4. Google User Data (IMPORTANT SECTION)</h2>
+				<p>
+					Our application accesses Google user data only with explicit user consent and only for the purposes
+					disclosed.
+				</p>
+				<p>
+					We comply with the Google API Services User Data Policy, including the Limited Use requirements.
+				</p>
+				<p>We do not:</p>
+				<ul className="list-disc space-y-2 pl-6">
+					<li>Sell Google user data</li>
+					<li>Use Google user data for advertising</li>
+					<li>Share Google user data with third parties except as required to operate the service</li>
+				</ul>
+			</section>
+
+			<section className="space-y-3">
+				<h2 className="text-xl font-semibold">5. Data Sharing and Third Parties</h2>
+				<p>We do not share personal or Google user data with third parties except:</p>
+				<ul className="list-disc space-y-2 pl-6">
+					<li>When required by law</li>
+					<li>To comply with legal obligations</li>
+					<li>To provide core app functionality using Google Cloud services</li>
+				</ul>
+				<p>All third-party services used comply with applicable data protection laws.</p>
+			</section>
+
+			<section className="space-y-3">
+				<h2 className="text-xl font-semibold">6. Data Storage and Security</h2>
+				<p>Data is securely stored using Google Cloud Platform services.</p>
+				<p>We implement:</p>
+				<ul className="list-disc space-y-2 pl-6">
+					<li>Encryption in transit and at rest</li>
+					<li>Access controls and least-privilege permissions</li>
+					<li>Regular security updates and monitoring</li>
+				</ul>
+			</section>
+
+			<section className="space-y-3">
+				<h2 className="text-xl font-semibold">7. Data Retention and Deletion</h2>
+				<p>We retain data only as long as necessary to provide the service.</p>
+				<p>Users may request data deletion by:</p>
+				<ul className="list-disc space-y-2 pl-6">
+					<li>Contacting us at ghampton2005@gmail.com</li>
+					<li>Using in-app deletion tools (if available)</li>
+				</ul>
+				<p>Upon deletion request, data is permanently removed within [X] days.</p>
+			</section>
+
+			<section className="space-y-3">
+				<h2 className="text-xl font-semibold">8. User Rights</h2>
+				<p>Users have the right to:</p>
+				<ul className="list-disc space-y-2 pl-6">
+					<li>Access their data</li>
+					<li>Request correction or deletion</li>
+					<li>Revoke Google account access at any time via their Google Account settings</li>
+				</ul>
+			</section>
+
+			<section className="space-y-3">
+				<h2 className="text-xl font-semibold">9. Changes to This Policy</h2>
+				<p>
+					We may update this Privacy Policy from time to time. Updates will be posted on this page with a
+					revised date.
+				</p>
+			</section>
+
+			<section className="space-y-3">
+				<h2 className="text-xl font-semibold">10. Contact Information</h2>
+				<p>If you have questions or concerns about this Privacy Policy, contact us at:</p>
+				<p>ghampton2005@gmail.com</p>
+			</section>
+		</div>
+	);
+}
