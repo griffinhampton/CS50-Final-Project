@@ -42,8 +42,9 @@ export default function DashboardLayout({
 			key: "workflows",
 			items: [
 				{ href: "/workflows", label: "Workflow Dashboard" },
+				{ href: "/workflows/manage", label: "Manage Workflows" },
 				{ href: "/workflows/new", label: "New Workflow"},
-				{href:"/workflows/info ", label: "What is a Workflow?"}
+				{href:"/workflows/info", label: "What is a Workflow?"}
 			],
 		},
 		{href:"/analytics", label:"Analytics", type:"link"},

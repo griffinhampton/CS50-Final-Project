@@ -31,6 +31,7 @@ export async function POST(req: Request) {
       email: true,
       password: true,
       role: true,
+      lastLogin: true,
     },
   });
 
@@ -43,9 +44,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Invalid credentials" }, { status: 401 });
   }
 
+  const now = new Date();
+
   await prisma.user.update({
     where: { id: user.id },
-    data: { lastLogin: new Date() },
+    data: { previousLogin: user.lastLogin ?? null, lastLogin: now },
   });
 
   // Create a real session (random token stored hashed in DB)

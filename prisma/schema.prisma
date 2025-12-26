@@ -32,10 +32,35 @@ model User{
   role Role @default(USER)
   createdAt DateTime @default(now())
   lastLogin DateTime?
+  previousLogin DateTime?
 
   workflows UserWorkflows[]
   sessions Session[]
   connectedEmailAccounts ConnectedEmailAccount[]
+  emailSummaries EmailSummary[]
+}
+
+model EmailSummary {
+  id Int @id @default(autoincrement())
+  userId Int
+
+  provider EmailProvider?
+  source String
+
+  windowStart DateTime
+  windowEnd DateTime
+
+  condition Json?
+  emailCount Int
+  summaryText String
+  latestEmailAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, windowEnd, source])
+  @@unique([userId, windowStart, windowEnd, source])
 }
 
 model Session {
@@ -60,6 +85,7 @@ model UserWorkflows{
 
   createdAt DateTime @default(now())
   lastRun DateTime?
+  lastEmailTriggerAt DateTime?
   runCount Int @default(0)
   
   author  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
