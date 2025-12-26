@@ -7,9 +7,11 @@ import { PrismaPg } from '@prisma/adapter-pg';
 // This prevents creating multiple instances of Prisma Client in development
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
-const connectionString = process.env.DATABASE_URL || "postgresql://griffinhampton@localhost:5432/my_project_dev";
-if (!connectionString){
-    throw new Error('Fault at DATABASE_URL, not defined in env')
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+    throw new Error(
+        "DATABASE_URL is not set. Configure it in your environment (e.g. Vercel Project → Settings → Environment Variables)."
+    );
 }
 const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);

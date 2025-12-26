@@ -26,9 +26,9 @@ export async function GET(req: NextRequest) {
 		return NextResponse.json({ message: "Invalid OAuth state/code" }, { status: 400 });
 	}
 
-	const clientId = process.env.GOOGLE_CLIENT_ID;
-	const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-	const redirectUri = process.env.GOOGLE_REDIRECT_URI;
+	const clientId = process.env.GOOGLE_CLIENT_ID ?? process.env.GMAIL_CLIENT_ID;
+	const clientSecret = process.env.GOOGLE_CLIENT_SECRET ?? process.env.GMAIL_CLIENT_SECRET;
+	const redirectUri = process.env.GOOGLE_REDIRECT_URI ?? process.env.GMAIL_REDIRECT_URI;
 	if (!clientId || !clientSecret || !redirectUri) {
 		return NextResponse.json({ message: "Missing Google OAuth env vars" }, { status: 500 });
 	}

@@ -7,8 +7,8 @@ export async function GET(req: NextRequest) {
 	const user = await getSessionUser(req);
 	if (!user) return NextResponse.redirect(new URL("/login", req.url));
 
-	const clientId = process.env.GOOGLE_CLIENT_ID;
-	const redirectUri = process.env.GOOGLE_REDIRECT_URI;
+	const clientId = process.env.GOOGLE_CLIENT_ID ?? process.env.GMAIL_CLIENT_ID;
+	const redirectUri = process.env.GOOGLE_REDIRECT_URI ?? process.env.GMAIL_REDIRECT_URI;
 	if (!clientId || !redirectUri) {
 		return NextResponse.json({ message: "Missing Google OAuth env vars" }, { status: 500 });
 	}

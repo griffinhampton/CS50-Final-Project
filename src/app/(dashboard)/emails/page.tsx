@@ -9,20 +9,20 @@ export default function EmailsPage() {
         <div className="bg-white dark:bg-zinc-900 p-6 rounded-lg border border-zinc-200 dark:border-zinc-800 flex flex-col min-h-45">
           <h3 className="text-sm text-zinc-600 dark:text-zinc-400">Connect to use</h3>
           <p className="text-3xl font-bold mt-2">Gmail</p>
-		  <div className="mt-3 pt-3">
+		  <form action="/api/connect/gmail" method="get" className="mt-3 pt-3">
 		  <button
-            type="submit"
-            className="w-full px-4 py-2 rounded bg-black text-white dark:bg-white dark:text-black hover:bg-zinc-800 dark:hover:bg-zinc-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Connect
-          </button>
-		  </div>
+			  type="submit"
+			  className="w-full px-4 py-2 rounded bg-black text-white dark:bg-white dark:text-black hover:bg-zinc-800 dark:hover:bg-zinc-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+		  >
+			  Connect
+		  </button>
+		  </form>
         </div>
         
         <div className="bg-white dark:bg-zinc-900 p-6 rounded-lg border border-zinc-200 dark:border-zinc-800 flex flex-col min-h-45">
           <h3 className="text-sm text-zinc-600 dark:text-zinc-400">Connect to use</h3>
           <p className="text-3xl font-bold mt-2">Outlook</p>
-          <form action="/api/email/connect/microsoft" method="get" className="mt-3 pt-3">
+		  <form action="/api/connect/microsoft" method="get" className="mt-3 pt-3">
           <button
             type="submit"
             className="w-full px-4 py-2 rounded bg-black text-white dark:bg-white dark:text-black hover:bg-zinc-800 dark:hover:bg-zinc-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
@@ -35,7 +35,7 @@ export default function EmailsPage() {
         <div className="bg-white dark:bg-zinc-900 p-6 rounded-lg border border-zinc-200 dark:border-zinc-800 flex flex-col min-h-45">
           <h3 className="text-sm text-zinc-600 dark:text-zinc-400">Connect to use</h3>
           <p className="text-3xl font-bold mt-2">Yahoo</p>
-          <form action="/api/email/connect/yahoo" method="get" className="mt-3 pt-3">
+		  <form action="/api/connect/yahoo" method="get" className="mt-3 pt-3">
           <button
             type="submit"
             className="w-full px-4 py-2 rounded bg-black text-white dark:bg-white dark:text-black hover:bg-zinc-800 dark:hover:bg-zinc-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
