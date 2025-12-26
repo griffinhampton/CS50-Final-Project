@@ -4,6 +4,36 @@ import { getSessionUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { generateLoginWindowEmailSummary } from "@/services/email/summarize-login-window";
 
+type PrioritySummaryData = {
+	type: "prioritySummary";
+	version: 1;
+	windowStart: string;
+	windowEnd: string;
+	inboxLink: string;
+	counts: { high: number; medium: number; low: number; total: number };
+	categories: {
+		high: unknown[];
+		medium: unknown[];
+		low: unknown[];
+	};
+	overview?: string;
+};
+
+function tryParsePrioritySummary(summaryText: string): { prioritySummary: PrioritySummaryData | null; overviewText: string } {
+	const text = typeof summaryText === "string" ? summaryText : "";
+	if (!text.trim().startsWith("{")) return { prioritySummary: null, overviewText: text };
+	try {
+		const json = JSON.parse(text) as unknown;
+		if (json && typeof json === "object" && (json as any).type === "prioritySummary" && (json as any).version === 1) {
+			const overview = typeof (json as any).overview === "string" ? (json as any).overview : "";
+			return { prioritySummary: json as PrioritySummaryData, overviewText: overview || "" };
+		}
+	} catch {
+		// ignore
+	}
+	return { prioritySummary: null, overviewText: text };
+}
+
 const SOURCE_LOGIN_WINDOW_ALL = "loginWindowAll";
 
 export async function GET(req: NextRequest) {
@@ -38,6 +68,8 @@ export async function GET(req: NextRequest) {
 		},
 	});
 
+	const parsed = summary ? tryParsePrioritySummary(summary.summaryText) : { prioritySummary: null, overviewText: "" };
+
 	return NextResponse.json({
 		windowStart: windowStart.toISOString(),
 		windowEnd: windowEnd.toISOString(),
@@ -45,7 +77,8 @@ export async function GET(req: NextRequest) {
 			? {
 				id: summary.id,
 				emailCount: summary.emailCount,
-				summaryText: summary.summaryText,
+				summaryText: parsed.overviewText || (parsed.prioritySummary ? "" : summary.summaryText),
+				prioritySummary: parsed.prioritySummary,
 				latestEmailAt: summary.latestEmailAt ? summary.latestEmailAt.toISOString() : null,
 				createdAt: summary.createdAt.toISOString(),
 			}
@@ -81,13 +114,15 @@ export async function POST(req: NextRequest) {
 	});
 
 	if (existing) {
+		const parsed = tryParsePrioritySummary(existing.summaryText);
 		return NextResponse.json({
 			windowStart: windowStart.toISOString(),
 			windowEnd: windowEnd.toISOString(),
 			summary: {
 				id: existing.id,
 				emailCount: existing.emailCount,
-				summaryText: existing.summaryText,
+				summaryText: parsed.overviewText || (parsed.prioritySummary ? "" : existing.summaryText),
+				prioritySummary: parsed.prioritySummary,
 				latestEmailAt: existing.latestEmailAt ? existing.latestEmailAt.toISOString() : null,
 				createdAt: existing.createdAt.toISOString(),
 			},
@@ -108,7 +143,14 @@ export async function POST(req: NextRequest) {
 			summary: {
 				id: recordId,
 				emailCount: result.emailCount,
-				summaryText: result.summaryText,
+				summaryText: (() => {
+					const parsed = tryParsePrioritySummary(result.summaryText);
+					return parsed.overviewText || (parsed.prioritySummary ? "" : result.summaryText);
+				})(),
+				prioritySummary: (() => {
+					const parsed = tryParsePrioritySummary(result.summaryText);
+					return parsed.prioritySummary;
+				})(),
 				latestEmailAt: result.latestEmailAt,
 			},
 		});

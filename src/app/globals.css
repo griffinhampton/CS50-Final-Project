@@ -41,6 +41,9 @@ body {
   h2 { @apply text-3xl font-light; }
   h3 { @apply text-lg; }
   p { @apply text-base font-normal; }
+
+	button { cursor: pointer; }
+	button:disabled { cursor: not-allowed; }
 }
 
 /* React Flow controls theme tweaks */

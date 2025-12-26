@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
 	const clientSecret = process.env.GOOGLE_CLIENT_SECRET ?? process.env.GMAIL_CLIENT_SECRET;
 	const redirectUri = process.env.GOOGLE_REDIRECT_URI ?? process.env.GMAIL_REDIRECT_URI;
 	if (!clientId || !clientSecret || !redirectUri) {
-		return NextResponse.json({ message: "Missing Google OAuth env vars" }, { status: 500 });
+		return NextResponse.redirect(new URL("/emails?connected=gmail&error=missing_oauth_env", req.url));
 	}
 
 	const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
@@ -58,8 +58,7 @@ export async function GET(req: NextRequest) {
 	});
 
 	if (!tokenRes.ok) {
-		const text = await tokenRes.text().catch(() => "");
-		return NextResponse.json({ message: "Token exchange failed", detail: text }, { status: 502 });
+		return NextResponse.redirect(new URL("/emails?connected=gmail&error=token_exchange_failed", req.url));
 	}
 
 	const tokenJson: {
@@ -93,29 +92,33 @@ export async function GET(req: NextRequest) {
 		// ignore
 	}
 
-	await prisma.connectedEmailAccount.upsert({
-		where: {
-			provider_providerAccountId: {
+	try {
+		await prisma.connectedEmailAccount.upsert({
+			where: {
+				provider_providerAccountId: {
+					provider: EmailProvider.GOOGLE,
+					providerAccountId,
+				},
+			},
+			create: {
+				userId: user.id,
 				provider: EmailProvider.GOOGLE,
 				providerAccountId,
+				email,
+				accessTokenEnc: encryptString(tokenJson.access_token),
+				refreshTokenEnc: tokenJson.refresh_token ? encryptString(tokenJson.refresh_token) : null,
+				expiresAt,
 			},
-		},
-		create: {
-			userId: user.id,
-			provider: EmailProvider.GOOGLE,
-			providerAccountId,
-			email,
-			accessTokenEnc: encryptString(tokenJson.access_token),
-			refreshTokenEnc: tokenJson.refresh_token ? encryptString(tokenJson.refresh_token) : null,
-			expiresAt,
-		},
-		update: {
-			accessTokenEnc: encryptString(tokenJson.access_token),
-			refreshTokenEnc: tokenJson.refresh_token ? encryptString(tokenJson.refresh_token) : undefined,
-			expiresAt,
-			email: email ?? undefined,
-		},
-	});
+			update: {
+				accessTokenEnc: encryptString(tokenJson.access_token),
+				refreshTokenEnc: tokenJson.refresh_token ? encryptString(tokenJson.refresh_token) : undefined,
+				expiresAt,
+				email: email ?? undefined,
+			},
+		});
+	} catch {
+		return NextResponse.redirect(new URL("/emails?connected=gmail&error=save_failed", req.url));
+	}
 
 	return NextResponse.redirect(new URL("/emails?connected=gmail", req.url));
 }

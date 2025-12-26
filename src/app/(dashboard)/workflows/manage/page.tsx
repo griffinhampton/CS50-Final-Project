@@ -19,6 +19,7 @@ export default async function ManageWorkflowsPage() {
 		select: {
 			id: true,
 			name: true,
+			trigger: true,
 			isActive: true,
 			createdAt: true,
 			lastRun: true,

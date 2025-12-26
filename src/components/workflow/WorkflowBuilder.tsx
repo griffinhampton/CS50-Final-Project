@@ -6,24 +6,41 @@ import type { WorkflowGraphDefinition, WorkflowTrigger } from "@/types/workflow"
 
 type SaveResponse = { workflow?: { id: number } };
 
-export default function WorkflowBuilder() {
-	const [name, setName] = useState("My Workflow");
-	const [triggerType, setTriggerType] = useState<WorkflowTrigger["type"]>("manual");
-	const [createdWorkflowId, setCreatedWorkflowId] = useState<number | null>(null);
+type InitialWorkflow = {
+	id: number;
+	name: string;
+	trigger: WorkflowTrigger;
+	actions: WorkflowGraphDefinition;
+	isActive: boolean;
+};
+
+type Props = {
+	initialWorkflow?: InitialWorkflow;
+};
+
+export default function WorkflowBuilder({ initialWorkflow }: Props) {
+	const [name, setName] = useState(() => initialWorkflow?.name ?? "My Workflow");
+	const [triggerType, setTriggerType] = useState<WorkflowTrigger["type"]>(() => initialWorkflow?.trigger.type ?? "manual");
+	const [createdWorkflowId, setCreatedWorkflowId] = useState<number | null>(() => initialWorkflow?.id ?? null);
 	const [status, setStatus] = useState<string | null>(null);
 
 	const graphRef = useRef<WorkflowGraphDefinition | null>(null);
 
 	async function saveWorkflow() {
 		setStatus("Saving...");
-		const res = await fetch("/api/workflows", {
-			method: "POST",
+
+		const isEdit = Boolean(initialWorkflow?.id);
+		const url = isEdit ? `/api/workflows/${initialWorkflow!.id}` : "/api/workflows";
+		const method = isEdit ? "PATCH" : "POST";
+
+		const res = await fetch(url, {
+			method,
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
 				name,
 				trigger: { type: triggerType },
 				actions: graphRef.current ?? { nodes: [], edges: [] },
-				isActive: true,
+				isActive: initialWorkflow?.isActive ?? true,
 			}),
 		});
 
@@ -61,6 +78,7 @@ export default function WorkflowBuilder() {
 		<div className="relative h-full w-full">
 			<div className="absolute inset-0">
 				<WorkflowCanvas
+					initialGraph={initialWorkflow?.actions}
 					onGraphChange={(graph) => {
 						graphRef.current = graph;
 					}}

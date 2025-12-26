@@ -10,16 +10,10 @@ export async function GET(req: NextRequest) {
 	const clientId = process.env.GOOGLE_CLIENT_ID ?? process.env.GMAIL_CLIENT_ID;
 	const redirectUri = process.env.GOOGLE_REDIRECT_URI ?? process.env.GMAIL_REDIRECT_URI;
 	if (!clientId || !redirectUri) {
-		return NextResponse.json({ message: "Missing Google OAuth env vars" }, { status: 500 });
+		return NextResponse.redirect(new URL("/emails?connected=gmail&error=missing_oauth_env", req.url));
 	}
 	if (process.env.NODE_ENV === "production" && redirectUri.includes("localhost")) {
-		return NextResponse.json(
-			{
-				message:
-					"Google OAuth misconfigured: redirect URI points to localhost. Set GOOGLE_REDIRECT_URI (or GMAIL_REDIRECT_URI) to your deployed https://.../api/email/callback/gmail URL.",
-			},
-			{ status: 500 },
-		);
+		return NextResponse.redirect(new URL("/emails?connected=gmail&error=redirect_uri_localhost", req.url));
 	}
 
 	const state = crypto.randomBytes(32).toString("base64url");

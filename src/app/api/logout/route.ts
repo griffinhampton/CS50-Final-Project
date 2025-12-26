@@ -12,6 +12,8 @@ export async function POST() {
       await prisma.session.delete({ where: { tokenHash } }).catch(() => {});
     }
 
+    // Ensure we delete the same cookie variant (path=/).
+    cookieStore.set(getSessionCookieName(), "", { path: "/", maxAge: 0 });
     cookieStore.delete(getSessionCookieName());
 
     return NextResponse.json(
