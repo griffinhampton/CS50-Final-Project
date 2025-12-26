@@ -57,7 +57,7 @@ export default function EmailSummaryCard() {
 					setSummaryResp(genJson);
 				}
 			}
-		} catch (e) {
+		} catch {
 			// Same intent: keep the dashboard calm unless auth is broken.
 			setSummaryResp({ windowStart: "", windowEnd: "", summary: null });
 			setError(null);

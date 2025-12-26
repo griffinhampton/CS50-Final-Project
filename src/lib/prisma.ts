@@ -13,7 +13,16 @@ if (!connectionString) {
         "DATABASE_URL is not set. Configure it in your environment (e.g. Vercel Project → Settings → Environment Variables)."
     );
 }
-const pool = new Pool({ connectionString });
+
+// In serverless (Vercel), keep pool sizes tiny to avoid exhausting managed Postgres poolers.
+// Override via PG_POOL_MAX if needed.
+const pool = new Pool({
+    connectionString,
+    max: Number(process.env.PG_POOL_MAX ?? '1'),
+    idleTimeoutMillis: Number(process.env.PG_POOL_IDLE_TIMEOUT_MS ?? '10000'),
+    connectionTimeoutMillis: Number(process.env.PG_POOL_CONN_TIMEOUT_MS ?? '10000'),
+    allowExitOnIdle: true,
+});
 const adapter = new PrismaPg(pool);
 
 export const prisma = globalForPrisma.prisma || new PrismaClient({ adapter });

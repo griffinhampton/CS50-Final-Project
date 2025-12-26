@@ -9,10 +9,13 @@ import {
 
 export async function GET() {
   try {
+    const debug = process.env.SESSION_DEBUG === 'true';
     const cookieStore = await cookies();
     const sessionToken = cookieStore.get(getSessionCookieName())?.value;
 
-    console.log('[SESSION DEBUG] Cookie value:', sessionToken);
+    if (debug) {
+      console.log('[SESSION DEBUG] hasCookie:', Boolean(sessionToken));
+    }
 
     if (!sessionToken) {
       return NextResponse.json({ user: null }, { status: 401 });
@@ -20,7 +23,9 @@ export async function GET() {
 
     const now = new Date();
     const tokenHash = hashSessionToken(sessionToken);
-    console.log('[SESSION DEBUG] Token hash:', tokenHash);
+    if (debug) {
+      console.log('[SESSION DEBUG] tokenHashPrefix:', tokenHash.slice(0, 8));
+    }
     const session = await prisma.session.findUnique({
       where: { tokenHash },
       select: {
@@ -37,13 +42,18 @@ export async function GET() {
       },
     });
 
-    console.log('[SESSION DEBUG] DB session:', session);
+    if (debug) {
+      console.log('[SESSION DEBUG] sessionFound:', Boolean(session));
+      if (session) console.log('[SESSION DEBUG] expiresAt:', session.expiresAt);
+    }
 
     if (!session || session.expiresAt <= now) {
-      if (!session) {
-        console.log('[SESSION DEBUG] No session found for hash');
-      } else if (session.expiresAt <= now) {
-        console.log('[SESSION DEBUG] Session expired at', session.expiresAt, 'now is', now);
+      if (debug) {
+        if (!session) {
+          console.log('[SESSION DEBUG] invalid: no session found');
+        } else if (session.expiresAt <= now) {
+          console.log('[SESSION DEBUG] invalid: expired');
+        }
       }
       // Best-effort cleanup
       if (session) {
