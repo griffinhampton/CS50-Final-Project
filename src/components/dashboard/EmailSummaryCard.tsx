@@ -103,10 +103,21 @@ export default function EmailSummaryCard() {
 			) : error ? (
 				<div className="mt-3 text-sm text-zinc-600 dark:text-zinc-300">{error}</div>
 			) : summaryResp?.summary ? (
-				<div className="mt-3">
-					<div className="text-3xl font-bold">{summaryResp.summary.emailCount}</div>
-					<div className="mt-2 whitespace-pre-wrap text-xs text-zinc-600 dark:text-zinc-300">
-						{summaryResp.summary.summaryText}
+				<div className="mt-4">
+					<div className="text-xs text-zinc-500 dark:text-zinc-400">
+						{summaryResp.summary.emailCount} email{summaryResp.summary.emailCount === 1 ? "" : "s"}
+					</div>
+					<div className="mt-3 space-y-3">
+						<div className="flex justify-end">
+							<div className="max-w-[85%] rounded-lg px-3 py-2 text-sm bg-zinc-900 text-white dark:bg-white dark:text-black">
+								Summarize my emails since last login.
+							</div>
+						</div>
+						<div className="flex justify-start">
+							<div className="max-w-[85%] rounded-lg px-3 py-2 text-sm bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100 whitespace-pre-wrap">
+								{summaryResp.summary.summaryText}
+							</div>
+						</div>
 					</div>
 				</div>
 			) : (

@@ -27,7 +27,9 @@ export default async function DashboardPage() {
           <p className="text-3xl font-bold mt-2">0</p>
         </div>
 
-		<EmailSummaryCard />
+      <div className="md:col-span-3">
+        <EmailSummaryCard />
+      </div>
       </div>
     </div>
   );

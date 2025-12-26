@@ -9,6 +9,8 @@ import {
 	type GmailMessage,
 } from "@/services/email/google";
 
+import { generateShortEmailSummaryWithAI } from "@/services/email/ai-email-summary";
+
 import type { WorkflowCondition } from "@/types/workflow";
 
 function headerValue(message: GmailMessage, name: string): string {
@@ -136,48 +138,81 @@ export async function generateLoginWindowEmailSummary(options: {
 		if (receivedAt && (!latestEmailAt || receivedAt > latestEmailAt)) latestEmailAt = receivedAt;
 	}
 
-	const senderCounts = new Map<string, number>();
-	for (const e of emails) {
-		const key = (e.from || "Unknown sender").trim();
-		senderCounts.set(key, (senderCounts.get(key) ?? 0) + 1);
-	}
+	const truncated = ids.length >= limit;
 
-	const topSenders = Array.from(senderCounts.entries())
-		.sort((a, b) => b[1] - a[1])
-		.slice(0, 3);
+	let summaryText = "";
+	const mode = (process.env.EMAIL_SUMMARY_MODE || "").toLowerCase();
+	const shouldUseAI = mode === "ai" || (mode === "" && Boolean(process.env.CLIENT_AI_API_KEY));
 
-	const lines: string[] = [];
-	lines.push(`Email summary (${emails.length} email${emails.length === 1 ? "" : "s"})`);
-	lines.push(`Window: ${windowStart.toLocaleString()} → ${windowEnd.toLocaleString()}`);
-
-	if (condition.type !== "none") {
-		lines.push(`Condition: ${condition.type === "emailContains" ? `contains \"${condition.value}\"` : "has attachment"}`);
-	}
-
-	if (topSenders.length) {
-		lines.push("Top senders:");
-		for (const [sender, count] of topSenders) {
-			lines.push(`- ${sender} (${count})`);
+	if (emails.length === 0) {
+		summaryText = "No new emails.";
+	} else if (shouldUseAI) {
+		try {
+			summaryText = await generateShortEmailSummaryWithAI({
+				emails: emails.map((e) => ({
+					from: e.from,
+					subject: e.subject,
+					snippet: e.text,
+					hasAttachment: e.hasAttachment,
+					receivedAt: e.receivedAt,
+				})),
+				windowStart,
+				windowEnd,
+				condition,
+			});
+		} catch {
+			// Fall back to deterministic summary if AI fails.
+			summaryText = "";
 		}
 	}
 
-	lines.push("");
-	lines.push("Highlights:");
+	if (!summaryText) {
+		const senderCounts = new Map<string, number>();
+		for (const e of emails) {
+			const key = (e.from || "Unknown sender").trim();
+			senderCounts.set(key, (senderCounts.get(key) ?? 0) + 1);
+		}
 
-	const highlightLimit = 10;
-	for (const e of emails.slice(0, highlightLimit)) {
-		const snippet = e.text.replace(/\s+/g, " ").trim().slice(0, 200);
-		const att = e.hasAttachment ? " (attachment)" : "";
-		lines.push(`- ${e.subject || "(no subject)"}${att} — ${e.from || "Unknown"}${snippet ? ` — ${snippet}` : ""}`);
-	}
+		const topSenders = Array.from(senderCounts.entries())
+			.sort((a, b) => b[1] - a[1])
+			.slice(0, 3);
 
-	const truncated = emails.length > highlightLimit || ids.length >= limit;
-	if (ids.length >= limit) {
+		const lines: string[] = [];
+		lines.push(`Email summary (${emails.length} email${emails.length === 1 ? "" : "s"})`);
+		lines.push(`Window: ${windowStart.toLocaleString()} → ${windowEnd.toLocaleString()}`);
+
+		if (condition.type !== "none") {
+			lines.push(
+				`Condition: ${condition.type === "emailContains" ? `contains \"${condition.value}\"` : "has attachment"}`,
+			);
+		}
+
+		if (topSenders.length) {
+			lines.push("Top senders:");
+			for (const [sender, count] of topSenders) {
+				lines.push(`- ${sender} (${count})`);
+			}
+		}
+
 		lines.push("");
-		lines.push(`Note: capped at ${limit} emails for performance.`);
-	}
+		lines.push("Highlights:");
 
-	const summaryText = lines.join("\n").trim();
+		const highlightLimit = 10;
+		for (const e of emails.slice(0, highlightLimit)) {
+			const snippet = e.text.replace(/\s+/g, " ").trim().slice(0, 200);
+			const att = e.hasAttachment ? " (attachment)" : "";
+			lines.push(
+				`- ${e.subject || "(no subject)"}${att} — ${e.from || "Unknown"}${snippet ? ` — ${snippet}` : ""}`,
+			);
+		}
+
+		if (ids.length >= limit) {
+			lines.push("");
+			lines.push(`Note: capped at ${limit} emails for performance.`);
+		}
+
+		summaryText = lines.join("\n").trim();
+	}
 
 	// Persist
 	const record = await prisma.emailSummary.upsert({
