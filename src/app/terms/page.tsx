@@ -7,7 +7,7 @@ export default function TermsOfServicePage() {
 			<section className="space-y-3">
 				<h2 className="text-xl font-semibold">1. Acceptance of Terms</h2>
 				<p>
-					By accessing or using [Your App Name] (the "Service"), you agree to be bound by these Terms of Service.
+					By accessing or using CS-50 Final Project (Workflow Generator), you agree to be bound by these Terms of Service.
 					 If you do not agree, do not use the Service.
 				</p>
 			</section>
@@ -23,7 +23,7 @@ export default function TermsOfServicePage() {
 
 			<section className="space-y-3">
 				<h2 className="text-xl font-semibold">3. Eligibility</h2>
-				<p>You must be at least [X] years old to use this Service.</p>
+				<p>You must be at least 13 years old to use this Service.</p>
 			</section>
 
 			<section className="space-y-3">
