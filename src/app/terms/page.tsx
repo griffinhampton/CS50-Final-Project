@@ -2,7 +2,7 @@ export default function TermsOfServicePage() {
 	return (
 		<div className="mx-auto w-full max-w-4xl space-y-6 p-6">
 			<h1 className="text-3xl font-bold">Terms of Service</h1>
-			<div className="text-sm text-zinc-600 dark:text-zinc-300">Last updated: December 26, 2025</div>
+			<div className="text-sm text-zinc-600 dark:text-zinc-300">Last updated: [DATE]</div>
 
 			<section className="space-y-3">
 				<h2 className="text-xl font-semibold">1. Acceptance of Terms</h2>
