@@ -1,9 +1,21 @@
+export default function EmailsPage({
+  searchParams,
+}: {
+  searchParams?: { connected?: string; error?: string };
+}) {
+  const connected = typeof searchParams?.connected === "string" ? searchParams.connected : null;
+  const error = typeof searchParams?.error === "string" ? searchParams.error : null;
 
-
-export default function EmailsPage() {
 	return (
 	<div className="space-y-6 p-6">
       	<h1 className="text-3xl font-bold">Connect Emails</h1>
+    {connected || error ? (
+      <div className="text-sm text-zinc-600 dark:text-zinc-300">
+        {error
+          ? `Connection error (${connected ?? "provider"}): ${error}`
+          : `Connected: ${connected}`}
+      </div>
+    ) : null}
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-zinc-900 p-6 rounded-lg border border-zinc-200 dark:border-zinc-800 flex flex-col min-h-45">

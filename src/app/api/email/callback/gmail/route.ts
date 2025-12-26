@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 	const error = url.searchParams.get("error");
 
 	if (error) {
-		return NextResponse.redirect(new URL(`/dashboard/emails?connected=gmail&error=${encodeURIComponent(error)}`, req.url));
+		return NextResponse.redirect(new URL(`/emails?connected=gmail&error=${encodeURIComponent(error)}`, req.url));
 	}
 
 	const jar = await cookies();
@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
 		// - domain/redirect mismatch so the state cookie isn't present
 		return NextResponse.redirect(
 			new URL(
-				`/dashboard/emails?connected=gmail&error=${encodeURIComponent(
+				`/emails?connected=gmail&error=${encodeURIComponent(
 					!code || !state ? "missing_oauth_params" : "oauth_state_mismatch",
 				)}`,
 				req.url,
@@ -117,6 +117,6 @@ export async function GET(req: NextRequest) {
 		},
 	});
 
-	return NextResponse.redirect(new URL("/dashboard/emails?connected=gmail", req.url));
+	return NextResponse.redirect(new URL("/emails?connected=gmail", req.url));
 }
 

@@ -107,5 +107,5 @@ export async function GET(req: NextRequest) {
     },
   });
 
-  return NextResponse.redirect(new URL("/dashboard/emails?connected=microsoft", req.url));
+  return NextResponse.redirect(new URL("/emails?connected=microsoft", req.url));
 }

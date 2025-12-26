@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 	const error = url.searchParams.get("error");
 
 	if (error) {
-		return NextResponse.redirect(new URL(`/dashboard/emails?connected=yahoo&error=${encodeURIComponent(error)}`, req.url));
+		return NextResponse.redirect(new URL(`/emails?connected=yahoo&error=${encodeURIComponent(error)}`, req.url));
 	}
 
 	const jar = await cookies();
@@ -108,6 +108,6 @@ export async function GET(req: NextRequest) {
 		},
 	});
 
-	return NextResponse.redirect(new URL("/dashboard/emails?connected=yahoo", req.url));
+	return NextResponse.redirect(new URL("/emails?connected=yahoo", req.url));
 }
 
