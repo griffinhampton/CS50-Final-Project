@@ -9,10 +9,8 @@ export default async function EmailsPage({
 }: {
   searchParams?: { connected?: string; error?: string };
 }) {
-  // This page is where users initiate OAuth; require login so the callback can
-  // persist the connection to the correct user
   const user = await getServerSessionUser();
-  if (!user) console.log("Oops!");
+  if (!user) redirect("/login")
 
   const connectedAccounts = await prisma.connectedEmailAccount.findMany({
     where: { userId: user.id },
