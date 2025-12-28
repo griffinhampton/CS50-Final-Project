@@ -46,9 +46,6 @@ export default function MarketingPage() {
 				</div>
 			</section>
 
-			<footer>
-				{/* Footer component elsewhere will show privacy/terms */}
-			</footer>
 		</main>
 	);
 }

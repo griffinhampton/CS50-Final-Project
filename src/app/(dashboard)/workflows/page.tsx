@@ -2,6 +2,9 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getServerSessionUser } from "@/lib/server-session";
 
+//ill explain the getserversessionuser func here, basically it checks the users cookies every time they go
+// to ANY page and if they dont have the neccessary cookies then they get redirected to a login screen
+
 export default async function WorkflowsPage() {
 	const user = await getServerSessionUser();
 	if (!user) {
@@ -96,3 +99,4 @@ export default async function WorkflowsPage() {
 	);
 }
 
+//visual only again

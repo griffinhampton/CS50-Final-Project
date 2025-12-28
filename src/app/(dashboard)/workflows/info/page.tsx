@@ -1,3 +1,5 @@
+//ended up not being that useful lol
+
 export default function WorkflowsInfoPage() {
 	return (
         <div className="space-y-6 p-6">

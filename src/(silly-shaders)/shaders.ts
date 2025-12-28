@@ -1,3 +1,6 @@
+//this was ported from a prior cs50 project, check out homepage if u care, the code was originally inspired by
+//webgl shader documentation and open source examples
+
 export const vertexShader: string = `
 varying vec2 vUv;
 void main() {

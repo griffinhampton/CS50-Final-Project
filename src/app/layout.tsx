@@ -5,6 +5,8 @@ import Navbar from "@/components/layouts/navbar";
 import { Providers } from "../components/ui/providers"
 import Footer from "@/components/ui/footer";
 
+//homepage primarily
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

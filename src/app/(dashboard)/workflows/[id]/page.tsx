@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { getServerSessionUser } from "@/lib/server-session";
 import type { WorkflowGraphDefinition, WorkflowTrigger } from "@/types/workflow";
 
+//my error testing file, mostly created using claude
+
 function safeJsonParse(input: string): unknown {
 	try {
 		return JSON.parse(input) as unknown;

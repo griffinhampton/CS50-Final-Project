@@ -2,6 +2,11 @@ import { prisma } from "@/lib/prisma";
 import { getServerSessionUser } from "@/lib/server-session";
 import EmailSummaryCard from "@/components/dashboard/EmailSummaryCard";
 
+//prisma made connecting to my postgres server WAY easier, this is a really simple format to show 
+//specific data within my databases, in an easy call. 
+
+//please refer to the EmailSummaryCard for any complicated code 
+
 export default async function DashboardPage() {
   const user = await getServerSessionUser();
   const totalWorkflows = user ? await prisma.userWorkflows.count({ where: { userId: user.id } }) : 0;

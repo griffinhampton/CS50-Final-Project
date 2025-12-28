@@ -11,7 +11,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  // Check for session on mount + after navigations (Navbar persists across routes)
+  // 
   useEffect(() => {
     let cancelled = false;
     const controller = new AbortController();

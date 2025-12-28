@@ -1,6 +1,9 @@
 import * as THREE from "three";
 import {vertexShader, fluidShader, displayShader} from "./shaders";
 
+//this was ported from a prior cs50 project, check out homepage if u care, the code was originally inspired by
+//webgl shader documentation and open source examples
+
 let nameText: HTMLElement | null = null;
 document.addEventListener('DOMContentLoaded', () =>
 {

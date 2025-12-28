@@ -1,3 +1,5 @@
+//see dashboard layout for more hands on version of this, this was a copy from the code i made there
+
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

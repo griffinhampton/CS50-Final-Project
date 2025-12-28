@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { getServerSessionUser } from "@/lib/server-session";
 import ManageWorkflowsClient from "@/components/workflow/ManageWorkflowsClient";
 
+//clientside component, calls database to find all user workflows, displays them
+
 export default async function ManageWorkflowsPage() {
 	const user = await getServerSessionUser();
 	if (!user) {

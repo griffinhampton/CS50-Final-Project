@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import { ChevronDown, ChevronLeft, ChevronRight, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
+//my original sidebar, i used libraries from lucide-react to easily impliment the sideview navbar.
+//i guess that makes it half original?
+
 export default function DashboardLayout({
 	children,
 }: {

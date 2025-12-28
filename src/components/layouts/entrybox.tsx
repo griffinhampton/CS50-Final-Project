@@ -5,6 +5,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from "lucide-react";
 
+//using zod, (client side restriction for forms) to create/get values from entry boxes for me
+
+
 type Field = {
     name: string;
     label: string;

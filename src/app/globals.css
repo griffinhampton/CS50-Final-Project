@@ -1,15 +1,15 @@
 @import "tailwindcss";
 @import "@xyflow/react/dist/style.css";
-/* Make `dark:` respond to `.dark` from next-themes (not prefers-color-scheme). */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* tailwind is jsut every css convention but slightly less arcane, SLIGHTLY*/
 html {
   overflow-x: hidden;
 }
 
 body {
   overflow-x: hidden;
-  font-family: Arial, Helvetica, sans-serif; /* keep only what shouldn't override Tailwind utils */
+  font-family: Arial, Helvetica, sans-serif; 
 }
 
 :root {
@@ -17,7 +17,7 @@ body {
   --foreground: #171717;
 }
 
-/* If you want system-following behavior, next-themes will add/remove `.dark` on <html>. */
+
 :root.dark,
 .dark {
   --background: #0a0a0a;
@@ -46,7 +46,7 @@ body {
 	button:disabled { cursor: not-allowed; }
 }
 
-/* React Flow controls theme tweaks */
+
 .react-flow__controls button {
   background-color: rgba(255, 255, 255, 0.95);
   color: rgb(63, 63, 70);
@@ -61,7 +61,7 @@ body {
   @apply flex justify-center items-center;
 }
 
-/* Shader card styles */
+
 .shader-card {
   box-shadow: 0 8px 30px rgba(2,6,23,0.6);
   display: flex;
@@ -73,20 +73,17 @@ body {
   display: block;
 }
 
-/* Small responsive tweaks */
 @media (max-width: 768px) {
   .shader-card {
     height: 320px !important;
   }
 }
 
-/* Centered logo overlay inside shader card */
 .shader-logo {
   filter: invert(1) drop-shadow(0 10px 30px rgba(0,0,0,0.75));
   transition: filter 180ms ease, transform 220ms ease;
 }
 
-/* Make the r3f canvas fill its container exactly */
 .shader-r3f-canvas {
   width: 100% !important;
   height: 100% !important;

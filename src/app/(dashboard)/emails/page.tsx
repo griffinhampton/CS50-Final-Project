@@ -10,9 +10,9 @@ export default async function EmailsPage({
   searchParams?: { connected?: string; error?: string };
 }) {
   // This page is where users initiate OAuth; require login so the callback can
-  // persist the connection to the correct user.
+  // persist the connection to the correct user
   const user = await getServerSessionUser();
-  if (!user) redirect("/login");
+  if (!user) console.log("Oops!");
 
   const connectedAccounts = await prisma.connectedEmailAccount.findMany({
     where: { userId: user.id },
@@ -51,7 +51,7 @@ export default async function EmailsPage({
           ) : null}
           <h3 className="text-sm text-zinc-600 dark:text-zinc-400">Connect to use</h3>
           <p className="text-3xl font-bold mt-2">Gmail</p>
-		  <form action="/api/connect/gmail" method="get" className="mt-3 pt-3">
+		  <form action="/api/connect/gmail" method="get" className="mt-3 pt-3"> 
 		  <button
 			  type="submit"
 			  className="w-full px-4 py-2 rounded bg-black text-white dark:bg-white dark:text-black hover:bg-zinc-800 dark:hover:bg-zinc-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
@@ -100,15 +100,17 @@ export default async function EmailsPage({
     </div>
 	);
 
-	// auto phishing link checker
-	// seperate known and unknown, show certain email org messages first
-	// outlook cleanup feature
-	// draft a report every day, based on what the user wants to see
-	// identifying important stuff, unknown sender, unsubscribe user from garbage when accepted
-	// make suggestions based on which folder it should go into, based on common folders, on opened, etc
-	// easy way to make rules, flow chart 
-	// easy way to do something to one email and only one email
-	// auto reply if timeframe given by person is exceded without them replying
+
+  //TODO:
+	// auto phishing link checker - done 
+	// seperate known and unknown, show certain email org messages first - done
+	// outlook cleanup feature - kinda? done only gmail tho
+	// draft a report every day, based on what the user wants to see - kinda done
+	// identifying important stuff, unknown sender, unsubscribe user from garbage when accepted - done
+	// make suggestions based on which folder it should go into, based on common folders, on opened, etc - half done
+	// easy way to make rules, flow chart  - done
+	// easy way to do something to one email and only one email - done
+	// auto reply if timeframe given by person is exceded without them replying - half done
 
 }
 

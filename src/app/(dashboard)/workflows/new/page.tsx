@@ -1,6 +1,8 @@
 import WorkflowBuilder from "@/components/workflow/WorkflowBuilder";
 import { getServerSessionUser } from "@/lib/server-session";
 
+//sends user to workflow builder
+
 export default async function NewWorkflowPage() {
     const user = await getServerSessionUser();
     if (!user) {

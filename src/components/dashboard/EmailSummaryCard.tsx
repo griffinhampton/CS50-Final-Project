@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 
 type PriorityCategory = "high" | "medium" | "low";
 
+//priority category formula created by the gov I believe
+
 type PrioritizedEmailEntry = {
 	messageId: string;
 	threadId?: string;
@@ -86,8 +88,6 @@ export default function EmailSummaryCard() {
 		try {
 			const res = await fetch("/api/email/summaries", { cache: "no-store" });
 			if (!res.ok) {
-				// If summaries aren't available yet (or Gmail isn't connected), treat it as
-				// "no new emails" rather than surfacing an error in the dashboard.
 				if (res.status === 401) {
 					const text = await res.text().catch(() => "");
 					throw new Error(text || "Unauthorized");
@@ -105,8 +105,6 @@ export default function EmailSummaryCard() {
 					setSummaryResp(genJson);
 				}
 			} else if (!json.summary.prioritySummary) {
-				// Existing stored summaries may be plain-text from earlier versions.
-				// Regenerate once to get structured priority categories.
 				const gen = await fetch("/api/email/summaries", { method: "POST" });
 				if (gen.ok) {
 					const genJson = (await gen.json()) as SummaryResponse;
@@ -114,7 +112,6 @@ export default function EmailSummaryCard() {
 				}
 			}
 		} catch {
-			// Same intent: keep the dashboard calm unless auth is broken.
 			setSummaryResp({ windowStart: "", windowEnd: "", summary: null });
 			setError(null);
 		} finally {
@@ -136,7 +133,7 @@ export default function EmailSummaryCard() {
 				const json = (await res.json()) as { hasNewEmail?: boolean };
 				if (!cancelled) setHasNewEmail(Boolean(json.hasNewEmail));
 			} catch {
-				// ignore
+				// ignore soz
 			}
 		}
 
