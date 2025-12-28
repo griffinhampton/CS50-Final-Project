@@ -60,3 +60,35 @@ body {
 @utility flex-center {
   @apply flex justify-center items-center;
 }
+
+/* Shader card styles */
+.shader-card {
+  box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shader-canvas canvas {
+  display: block;
+}
+
+/* Small responsive tweaks */
+@media (max-width: 768px) {
+  .shader-card {
+    height: 320px !important;
+  }
+}
+
+/* Centered logo overlay inside shader card */
+.shader-logo {
+  filter: invert(1) drop-shadow(0 10px 30px rgba(0,0,0,0.75));
+  transition: filter 180ms ease, transform 220ms ease;
+}
+
+/* Make the r3f canvas fill its container exactly */
+.shader-r3f-canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}

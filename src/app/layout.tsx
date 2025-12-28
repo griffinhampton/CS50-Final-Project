@@ -18,6 +18,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Home",
   description: "The home page for CS50 final project",
+  icons: {
+    icon: "/images/logo.png",
+    shortcut: "/images/logo.png",
+    apple: "/images/logo.png",
+  },
 };
 
 export default function RootLayout({
@@ -27,11 +32,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className = "min-h-screen min-w-screen bg-zinc-50 dark:bg-black text-black dark:text-zinc-50">
+      <body className = "min-h-screen min-w-screen bg-zinc-50 dark:bg-black text-black dark:text-zinc-50 flex flex-col">
         <Providers>
           <Navbar />
-          {children}
-		  <Footer />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
         </Providers>
       </body>
     </html>
