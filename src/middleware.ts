@@ -24,7 +24,9 @@ export const config = {
          '/profile/:path*',
          '/integrations/:path*',
          '/workflows/:path*',
+         '/workflows',
          '/emails/:path*',
+         '/emails',
          '/admin/:path*',
          '/monitoring/:path*',
          '/settings/:path*']
