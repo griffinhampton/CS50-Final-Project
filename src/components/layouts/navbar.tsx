@@ -85,7 +85,7 @@ export default function Navbar() {
   
     <nav className="fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between px-4 bg-white text-black dark:bg-black dark:text-white border-b border-zinc-200 dark:border-zinc-800 shadow-lg backdrop-blur-sm">
       <div className="text-xl font-bold text-black dark:text-white">
-        <Link href="/" onClick={handleLogout}>Home</Link>
+        <Link href="/">Home</Link>
       </div>
       <div className="flex gap-6 items-center">
         {isLoggedIn && (

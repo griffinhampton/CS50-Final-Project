@@ -55,7 +55,7 @@ export default function DashboardLayout({
 			items: [
 				{href:"/emails", label:"Email Dashboard"},
 				{href:"/emails/compose",label:"Compose New Email"},
-				{href:"emails/templates",label:"Reuse Email Template"},
+				{href:"/emails/templates",label:"Reuse Email Template"},
 			],
 		},
 		{
