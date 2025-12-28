@@ -44,7 +44,7 @@ export default function DashboardLayout({
 			type: "dropdown",
 			key: "workflows",
 			items: [
-				{ href: "/workflows", label: "Workflow Dashboard" },
+				{ href: "/workflows/", label: "Workflow Dashboard" },
 				{ href: "/workflows/manage", label: "Manage Workflows" },
 				{ href: "/workflows/new", label: "New Workflow"},
 				{href:"/workflows/info", label: "What is a Workflow?"}
@@ -56,7 +56,7 @@ export default function DashboardLayout({
 			type:"dropdown",
 			key:"emails",
 			items: [
-				{href:"/emails", label:"Email Dashboard"},
+				{href:"/emails/", label:"Email Dashboard"},
 				{href:"/emails/compose",label:"Compose New Email"},
 				{href:"/emails/templates",label:"Reuse Email Template"},
 			],
