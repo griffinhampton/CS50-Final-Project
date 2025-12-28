@@ -62,7 +62,7 @@ function Scene() {
 
   // initialize render targets
   useEffect(() => {
-    const params: THREE.WebGLRenderTargetOptions = {
+    const params: THREE.RenderTargetOptions = {
       minFilter: THREE.LinearFilter,
       magFilter: THREE.LinearFilter,
       format: THREE.RGBAFormat,
@@ -120,7 +120,7 @@ function Scene() {
       );
     }
 
-    (fluidMaterial.uniforms as any).iPreviousFrame.value = previousRef.current.texture;
+    (fluidMaterial.uniforms as any).iPreviousFrame.value = previousRef.current ? previousRef.current.texture : null;
 
     // render simulation into current render target
     const simScene = new THREE.Scene();
@@ -129,7 +129,7 @@ function Scene() {
     gl.render(simScene, camera);
 
     // render display to screen
-    (displayMaterial.uniforms as any).iFluid.value = currentRef.current.texture;
+    (displayMaterial.uniforms as any).iFluid.value = currentRef.current ? currentRef.current.texture : null;
     const dispScene = new THREE.Scene();
     dispScene.add(displayMeshRef.current);
     gl.setRenderTarget(null);
