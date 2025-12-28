@@ -1,5 +1,7 @@
 import "server-only";
 
+//server side helper that calls open ai chat completion API
+
 export type OpenAIChatMessage = {
 	role: "system" | "user" | "assistant";
 	content: string;

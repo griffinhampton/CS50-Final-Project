@@ -4,10 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { gmailListMessageIds } from "@/services/email/google";
 import { runWorkflow } from "@/services/workflow/run-workflow";
 
-// NOTE:
-// This is designed to be invoked by a scheduler (e.g. Vercel Cron) so workflows can
-// run automatically "not controlled on your end".
-// Protect it with WORKFLOW_TRIGGER_SECRET.
+//uses time function to automate workflows (uses a scheduler (vercel cron))
+//protected with an env variable i have in vercel
 
 function isAuthorized(req: NextRequest): boolean {
 	const secret = process.env.WORKFLOW_TRIGGER_SECRET;
@@ -64,7 +62,6 @@ export async function POST(req: NextRequest) {
 		});
 		if (!user) continue;
 
-		// Check if any mail arrived after the last trigger run (fallback to last login or createdAt).
 		const afterDate = wf.lastEmailTriggerAt ?? user.lastLogin ?? wf.createdAt;
 		const after = Math.floor(afterDate.getTime() / 1000);
 
@@ -73,7 +70,6 @@ export async function POST(req: NextRequest) {
 			const ids = await gmailListMessageIds({ userId: user.id, query: `after:${after}`, maxResults: 1 });
 			hasNew = ids.length > 0;
 		} catch {
-			// If Gmail isn't connected (or token invalid), skip.
 			hasNew = false;
 		}
 
@@ -88,7 +84,6 @@ export async function POST(req: NextRequest) {
 				markEmailTriggerAt: now,
 			});
 		} catch {
-			// If workflow execution fails, don't advance cursor; allow retry next poll.
 			continue;
 		}
 
@@ -99,7 +94,7 @@ export async function POST(req: NextRequest) {
 	return NextResponse.json({ ok: true, checked, triggered, triggeredWorkflowIds });
 }
 
+//testing function
 export async function GET(req: NextRequest) {
-	// Convenience for testing from browser/cron.
 	return POST(req);
 }

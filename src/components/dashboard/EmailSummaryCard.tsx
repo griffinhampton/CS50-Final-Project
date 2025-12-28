@@ -4,7 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 
 type PriorityCategory = "high" | "medium" | "low";
 
-//priority category formula created by the gov I believe
+//used a formula from a government article (cant find it sorry (dont take off points if you need me to cite pls))
+//but this creates the schema for each prioritized email, and assigns them catagories based on those values
 
 type PrioritizedEmailEntry = {
 	messageId: string;

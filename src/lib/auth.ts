@@ -1,5 +1,7 @@
 import type { NextRequest } from "next/server";
 
+//this ended up just being a middleware helper (i hate middleware)
+
 export type SessionUser = {
     id: number;
     username: string;
@@ -7,8 +9,7 @@ export type SessionUser = {
     role: "USER" | "ADMIN";
 };
 
-// Edge-safe session fetch for middleware.
-// Calls our API route so middleware doesn't need Prisma (not Edge-compatible by default).
+
 export async function getSessionUser(request: NextRequest): Promise<SessionUser | null> {
     try {
         const url = new URL("/api/session", request.url);

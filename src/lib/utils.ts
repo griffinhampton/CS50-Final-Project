@@ -1,9 +1,7 @@
-// Utility functions
-// TODO: Add common helpers here
+//mainly used for allowing username OR email on login, zod helpers
 import { z } from 'zod';
 
-// Allow login with either username OR email.
-// We validate it is either a valid email, or a reasonable username.
+
 const usernameRegex = /^[a-zA-Z0-9_]{3,25}$/;
 
 export const loginSchema = z.object({
@@ -30,8 +28,7 @@ export const registerSchema = z.object({
         .min(6, "Password must be at least 6 characters")
         .max(100, "Password too long"),
 
-    // Email is optional ONLY on register.
-    // react-hook-form will send "" for an empty input, so preprocess that to undefined.
+
     email: z.preprocess(
         (v) => (typeof v === 'string' && v.trim() === '' ? undefined : v),
         z.string().trim().email("Invalid email address").optional()

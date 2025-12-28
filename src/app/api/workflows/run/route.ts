@@ -3,6 +3,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { getSessionUser } from "@/lib/auth";
 import { runWorkflow } from "@/services/workflow/run-workflow";
 
+//runs workflows
+
 type RunWorkflowBody = {
 	workflowId: number;
 };
@@ -33,7 +35,6 @@ export async function POST(req: NextRequest) {
 		);
 	}
 
-	// Should be unreachable because both try and catch return.
 	return NextResponse.json({ message: "Unknown error" }, { status: 500 });
 	
 }

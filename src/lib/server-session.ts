@@ -4,6 +4,8 @@ import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { getSessionCookieName, hashSessionToken } from "@/lib/session";
 
+//the code that users the session cookies, and hashes/stores them
+
 export type ServerSessionUser = {
 	id: number;
 	username: string;

@@ -1,5 +1,8 @@
 import "server-only";
 
+//heavy assistance from claude code, this is where i put the emails into each bucket
+//the phishing risk buckets, and importance buckets, using formula previously mentioned
+
 import { prisma } from "@/lib/prisma";
 import {
 	gmailExtractTextContent,
@@ -65,9 +68,6 @@ function normalizeText(input: string) {
 }
 
 function parseEmailAddress(fromRaw: string): string | null {
-	// Examples:
-	//   "Name" <user@example.com>
-	//   user@example.com
 	const match = fromRaw.match(/<([^>]+@[^>]+)>/);
 	if (match?.[1]) return match[1].trim();
 	const bare = fromRaw.match(/\b([A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,})\b/i);
@@ -75,7 +75,7 @@ function parseEmailAddress(fromRaw: string): string | null {
 }
 
 function extractUrls(text: string): string[] {
-	// Very lightweight URL detector.
+
 	const urls: string[] = [];
 	const re = /\bhttps?:\/\/[^\s<>"]+/gi;
 	let match: RegExpExecArray | null;
@@ -98,7 +98,6 @@ function isFreeEmailDomain(domain: string) {
 }
 
 function cueScoreFromCueCount(cueCount: number): number {
-	// Mapping per user's table (0–60).
 	if (cueCount <= 3) return 60;
 	if (cueCount <= 7) return 45;
 	if (cueCount <= 12) return 30;
@@ -122,7 +121,7 @@ function computePremiseAlignment(params: {
 	const userEmailLower = (params.userEmail ?? "").toLowerCase();
 	const usernameLower = (params.username ?? "").toLowerCase();
 
-	// Heuristic scoring 0..10 for each.
+
 	let workRelevance = 0;
 	if (["invoice", "meeting", "calendar", "interview", "contract", "ticket", "jira", "github", "pull request", "deployment", "build", "billing"].some((k) => hay.includes(k))) {
 		workRelevance = 8;
@@ -186,7 +185,7 @@ function computePhishingRisk(params: {
 	if (urls.some((u) => /bit\.ly|tinyurl\.com|t\.co|goo\.gl|ow\.ly/i.test(u))) cues.push("shortened_link");
 	if (urls.some((u) => /@/.test(u.replace(/^https?:\/\//i, "")))) cues.push("at_symbol_in_link");
 
-	// Sender-domain mismatch cue: email claims a brand, but sender domain is not that brand.
+
 	const fromDomain = domainFromEmail(params.fromEmail);
 	if (fromDomain) {
 		if (hay.includes("paypal") && !fromDomain.includes("paypal")) cues.push("brand_sender_domain_mismatch_paypal");
@@ -195,7 +194,7 @@ function computePhishingRisk(params: {
 		if (hay.includes("apple") && !fromDomain.includes("apple")) cues.push("brand_sender_domain_mismatch_apple");
 	}
 
-	// Premise alignment (0..40)
+
 	const premise = computePremiseAlignment({
 		subject: params.subject,
 		text: params.text,
@@ -225,7 +224,7 @@ function computePhishingRisk(params: {
 
 function gmailWebLink(threadIdOrMessageId: string | undefined) {
 	if (!threadIdOrMessageId) return null;
-	// Best-effort: Gmail web UI deep link. This assumes primary account slot (u/0).
+
 	return `https://mail.google.com/mail/u/0/#inbox/${encodeURIComponent(threadIdOrMessageId)}`;
 }
 
@@ -240,7 +239,6 @@ function computeUrgency(subject: string, text: string): number {
 
 function computeImpact(subject: string, text: string, hasAttachment: boolean, labels: string[]): number {
 	const hay = normalizeText(`${subject}\n${text}`);
-	// Gmail labels can hint importance.
 	if (labels.includes("IMPORTANT")) return 3;
 	if (labels.includes("CATEGORY_PERSONAL")) return Math.min(3, 2 + (hasAttachment ? 1 : 0));
 	const high = [
@@ -341,7 +339,6 @@ function buildGmailQuery(params: {
 	if (params.condition?.type === "emailContains") {
 		const v = String(params.condition.value ?? "").trim();
 		if (v) {
-			// Use quoted search for phrases; Gmail search will interpret it reasonably.
 			const escaped = v.replace(/"/g, "\\\"");
 			parts.push(`"${escaped}"`);
 		}
@@ -382,7 +379,6 @@ export async function generateLoginWindowEmailSummary(options: {
 	const limit = Math.min(Math.max(options.limit ?? 500, 1), 500);
 	const ids = await gmailListMessageIdsAll({ userId: user.id, query, limit });
 
-	// Fetch full messages so we can support attachment checks + extract text.
 	const emails: Array<{
 		messageId: string;
 		threadId?: string;
@@ -440,7 +436,6 @@ export async function generateLoginWindowEmailSummary(options: {
 	const mode = (process.env.EMAIL_SUMMARY_MODE || "").toLowerCase();
 	const shouldUseAI = mode === "ai" || (mode === "" && Boolean(process.env.CLIENT_AI_API_KEY));
 
-	// Build priority dashboard data (deterministic; aligns with urgency×impact formulas).
 	const high: PrioritizedEmailEntry[] = [];
 	type Bucket = PrioritizedEmailEntry[];
 	const medium: Bucket = [];
@@ -486,7 +481,7 @@ export async function generateLoginWindowEmailSummary(options: {
 		else low.push(entry);
 	}
 
-	// Sort most recent first within each bucket.
+
 	const byDateDesc = (a: PrioritizedEmailEntry, b: PrioritizedEmailEntry) => {
 		const ad = a.receivedAt ? new Date(a.receivedAt).getTime() : 0;
 		const bd = b.receivedAt ? new Date(b.receivedAt).getTime() : 0;
@@ -509,7 +504,6 @@ export async function generateLoginWindowEmailSummary(options: {
 	if (emails.length === 0) {
 		summaryText = "No new emails.";
 	} else {
-		// Optional AI: produce a short, single-paragraph overview. The per-email priority breakdown is deterministic.
 		if (shouldUseAI) {
 			try {
 				summaryText = await generateShortEmailSummaryWithAI({
@@ -582,13 +576,10 @@ export async function generateLoginWindowEmailSummary(options: {
 		summaryText = lines.join("\n").trim();
 	}
 
-	// Persist structured data inside summaryText to avoid schema migrations.
-	// The dashboard/API can detect and parse this JSON payload.
 	if (prioritySummary) {
 		summaryText = JSON.stringify({ ...prioritySummary, overview: summaryText });
 	}
 
-	// Persist
 	const record = await prisma.emailSummary.upsert({
 		where: {
 			userId_windowStart_windowEnd_source: {

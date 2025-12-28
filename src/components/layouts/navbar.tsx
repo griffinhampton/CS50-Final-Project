@@ -11,7 +11,8 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  // 
+  //ensures redirects go where i want them using middleware
+  //once again usual templating with next.js and tailwind
   useEffect(() => {
     let cancelled = false;
     const controller = new AbortController();
@@ -93,7 +94,7 @@ export default function Navbar() {
             <Link href="/dashboard" className={getLinkClass('/dashboard')}>
               Dashboard
             </Link>
-            <Link href="/workflows" className={getLinkClass('/workflows')}>
+            <Link href="/workflows/" className={getLinkClass('/workflows')}>
               Workflows
             </Link>
           </>

@@ -4,6 +4,8 @@ import { getSessionUser } from "@/lib/auth";
 
 type Params = { id: string };
 
+//confirms workflow pages (for each unique workflow) actually exist and arent duplicates
+
 export async function POST(req: NextRequest, ctx: { params: Promise<Params> | Params }) {
 	const user = await getSessionUser(req);
 	if (!user) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -21,7 +23,6 @@ export async function POST(req: NextRequest, ctx: { params: Promise<Params> | Pa
 			name: `${workflow.name} (copy)`,
 			trigger: workflow.trigger,
 			actions: workflow.actions,
-			// duplicate starts inactive to avoid unexpectedly hitting the active workflow limit
 			isActive: false,
 		},
 		select: { id: true, name: true, isActive: true, createdAt: true, lastRun: true, runCount: true },

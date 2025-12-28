@@ -4,6 +4,9 @@ import { EmailProvider } from "@/generated/prisma";
 import { prisma } from "@/lib/prisma";
 import { decryptString, encryptString } from "@/actions/encrypt";
 
+//this is 'industry standard' i got the code from oauth documentation, i didnt trust myself to make code
+//to handle user authentication on my own.
+
 type GoogleTokenResponse = {
 	access_token: string;
 	expires_in?: number;

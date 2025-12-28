@@ -11,6 +11,9 @@ import {
   hashSessionToken,
 } from "@/lib/session";
 
+//primarily authorization, and posting login request to login schema (to verify it's formatted correctly)
+//and if authorized then creates real session cookies which expire in 7 days
+
 export async function POST(req: Request) {
   const body = await req.json();
   const parsed = loginSchema.safeParse(body);
@@ -51,7 +54,7 @@ export async function POST(req: Request) {
     data: { previousLogin: user.lastLogin ?? null, lastLogin: now },
   });
 
-  // Create a real session (random token stored hashed in DB)
+  // creating real session
   const token = generateSessionToken();
   const tokenHash = hashSessionToken(token);
   const maxAge = getSessionMaxAgeSeconds();

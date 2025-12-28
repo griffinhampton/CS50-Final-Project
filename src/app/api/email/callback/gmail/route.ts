@@ -5,6 +5,8 @@ import { encryptString } from "@/actions/encrypt";
 import { getSessionUser } from "@/lib/auth";
 import { EmailProvider } from "@/generated/prisma";
 
+//created with heavy assistance from claude code, i really didnt trust myself with data management
+
 export async function GET(req: NextRequest) {
 	const user = await getSessionUser(req);
 	if (!user) return NextResponse.redirect(new URL("/login", req.url));
@@ -23,10 +25,6 @@ export async function GET(req: NextRequest) {
 	jar.delete("google_oauth_state");
 
 	if (!code || !state || !expectedState || state !== expectedState) {
-		// Common causes:
-		// - user refreshes the callback URL (we delete the cookie after first attempt)
-		// - multiple OAuth attempts in parallel
-		// - domain/redirect mismatch so the state cookie isn't present
 		return NextResponse.redirect(
 			new URL(
 				`/emails?connected=gmail&error=${encodeURIComponent(

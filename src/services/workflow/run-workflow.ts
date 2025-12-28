@@ -6,6 +6,9 @@ import { generateLoginWindowEmailSummary } from "@/services/email/summarize-logi
 import type { WorkflowCondition } from "@/types/workflow";
 import { conditionMatchesNow } from "@/services/workflow/conditions";
 
+//loads workflow from prisma and parses actions, skips actions where conditions dont match
+//executes gmail actions, and adds to runcount/lastrun
+
 export type WorkflowAction =
 	| { type: "gmailSend"; to: string; subject: string; bodyText: string; condition?: WorkflowCondition }
 	| { type: "gmailEnsureLabel"; name: string; condition?: WorkflowCondition }

@@ -4,6 +4,8 @@ import { getSessionUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { generateLoginWindowEmailSummary } from "@/services/email/summarize-login-window";
 
+//summarizes function within workflow
+
 type PrioritySummaryData = {
 	type: "prioritySummary";
 	version: 1;
@@ -90,7 +92,6 @@ export async function POST(req: NextRequest) {
 	const user = await getSessionUser(req);
 	if (!user) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
-	// Idempotent: if already exists for this login window, just return it.
 	const u = await prisma.user.findUnique({
 		where: { id: user.id },
 		select: { id: true, createdAt: true, lastLogin: true, previousLogin: true },

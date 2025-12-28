@@ -4,6 +4,9 @@ import { useRef, useState } from "react";
 import WorkflowCanvas from "@/components/workflow/workflowCanvas";
 import type { WorkflowGraphDefinition, WorkflowTrigger } from "@/types/workflow";
 
+//using elk and xyflow react to display the graph of the workflow, as seen in components, almost everything in
+//this file is just extra styling/the html elements you see on the graph
+
 type SaveResponse = { workflow?: { id: number } };
 
 type InitialWorkflow = {

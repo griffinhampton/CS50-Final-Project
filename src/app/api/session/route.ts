@@ -7,6 +7,9 @@ import {
   hashSessionToken,
 } from '@/lib/session';
 
+//this is actually kinda cool, it has a sliding window cookie removal protocol (leetcode mentioned)
+//but creates each session cookies, and allows me to debug session problems
+
 export async function GET() {
   try {
     const debug = process.env.SESSION_DEBUG === 'true';
@@ -55,7 +58,7 @@ export async function GET() {
           console.log('[SESSION DEBUG] invalid: expired');
         }
       }
-      // Best-effort cleanup
+      
       if (session) {
         await prisma.session.delete({ where: { id: session.id } }).catch(() => {});
       }
@@ -63,7 +66,7 @@ export async function GET() {
       return NextResponse.json({ user: null }, { status: 401 });
     }
 
-    // Sliding expiration: refresh cookie + expiry on each session load
+
     const maxAge = getSessionMaxAgeSeconds();
     await prisma.session.update({
       where: { id: session.id },

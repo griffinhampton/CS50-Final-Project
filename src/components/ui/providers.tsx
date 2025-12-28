@@ -3,6 +3,8 @@
 import { ThemeProvider } from "next-themes";
 import React from "react";
 
+//finds users theme (for light and dark mode)
+
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider

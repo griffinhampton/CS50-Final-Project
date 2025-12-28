@@ -4,6 +4,9 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
+//displays workflows as stored in my database, allows the user to delete/deactive/run them 
+//clientside
+
 type WorkflowRow = {
 	id: number;
 	name: string;

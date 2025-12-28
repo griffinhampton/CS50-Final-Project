@@ -1,5 +1,7 @@
 import "server-only";
 
+// posts and gets openai response and confirms conditionals are being used before each call
+
 import type { WorkflowCondition } from "@/types/workflow";
 import { openAIChatCompletion } from "@/services/ai/openai";
 
@@ -35,7 +37,6 @@ export async function generateShortEmailSummaryWithAI(options: {
 	const model = process.env.AI_MODEL || "gpt-4o-mini";
 	const baseUrl = process.env.AI_BASE_URL;
 
-	// Keep payload small + predictable.
 	const maxEmailsForPrompt = Math.min(Math.max(Number(process.env.AI_MAX_EMAILS ?? "25"), 1), 50);
 	const maxSnippetChars = Math.min(Math.max(Number(process.env.AI_MAX_SNIPPET_CHARS ?? "400"), 50), 1500);
 

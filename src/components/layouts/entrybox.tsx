@@ -5,7 +5,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from "lucide-react";
 
-//using zod, (client side restriction for forms) to create/get values from entry boxes for me
+//using zod, (client side restriction for forms) to create/get values from entry boxes 
+//everything else done here is just basic tailwind/next.js templating
 
 
 type Field = {

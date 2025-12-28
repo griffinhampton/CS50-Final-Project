@@ -3,6 +3,9 @@ import { NextResponse, type NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { getSessionUser } from "@/lib/auth";
 
+//handles confirming/verifying permissions. encryption, and decryption for the gmail read/write 
+//permissions so i can start running my scripts
+
 export async function GET(req: NextRequest) {
 	const user = await getSessionUser(req);
 	if (!user) return NextResponse.redirect(new URL("/login", req.url));
@@ -12,6 +15,8 @@ export async function GET(req: NextRequest) {
 	if (!clientId || !redirectUri) {
 		return NextResponse.redirect(new URL("/emails?connected=gmail&error=missing_oauth_env", req.url));
 	}
+
+	//dont worry, production var changed on the live server, the localhost thing is for MY testing
 	if (process.env.NODE_ENV === "production" && redirectUri.includes("localhost")) {
 		return NextResponse.redirect(new URL("/emails?connected=gmail&error=redirect_uri_localhost", req.url));
 	}

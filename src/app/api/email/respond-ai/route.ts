@@ -4,6 +4,9 @@ import { getSessionUser } from "@/lib/auth";
 import { openAIChatCompletion } from "@/services/ai/openai";
 import { gmailExtractTextContent, gmailGetMessage, gmailSendTextEmail } from "@/services/email/google";
 
+//sanitizeReplyText borrowed from stackoverflow, takes the reply text out of markdown format
+//this posts the info from the email to my openAI account, and uses that context to draft and send an email
+
 function sanitizeReplyText(input: string): string {
 	if (!input) return input;
 	// Normalize newlines

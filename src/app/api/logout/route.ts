@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getSessionCookieName, hashSessionToken } from '@/lib/session';
 
+//deletes current cookies, logging user out, does this by setting current cookies time to 0
+
 export async function POST() {
   try {
     const cookieStore = await cookies();
@@ -12,7 +14,7 @@ export async function POST() {
       await prisma.session.delete({ where: { tokenHash } }).catch(() => {});
     }
 
-    // Ensure we delete the same cookie variant (path=/).
+
     cookieStore.set(getSessionCookieName(), "", { path: "/", maxAge: 0 });
     cookieStore.delete(getSessionCookieName());
 

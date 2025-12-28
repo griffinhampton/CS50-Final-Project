@@ -5,6 +5,9 @@ import { encryptString } from "@/actions/encrypt";
 import { getSessionUser } from "@/lib/auth";
 import { EmailProvider } from "@/generated/prisma";
 
+
+//see gmail comment
+
 export async function GET(req: NextRequest) {
 	const user = await getSessionUser(req);
 	if (!user) return NextResponse.redirect(new URL("/login", req.url));

@@ -3,6 +3,9 @@ import { NextResponse, type NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { getSessionUser } from "@/lib/auth";
 
+
+//went ahead and kinda added functionality here, just have to actually get the oauth perms from outlook
+//made it for the gmail one and pasted it here
 export async function GET(req: NextRequest) {
   const user = await getSessionUser(req);
   if (!user) return NextResponse.redirect(new URL("/login", req.url));
@@ -15,7 +18,7 @@ export async function GET(req: NextRequest) {
 
   const state = crypto.randomBytes(32).toString("base64url");
 
-  // Store state in an httpOnly cookie for CSRF protection
+  //i love using jar as my cookie holder, its so silly
   const jar = await cookies();
   jar.set("ms_oauth_state", state, {
     httpOnly: true,

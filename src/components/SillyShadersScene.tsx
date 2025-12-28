@@ -4,6 +4,8 @@ import * as THREE from "three";
 import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import { vertexShader, fluidShader, displayShader } from "../(silly-shaders)/shaders";
 
+//my config/initialization file for my wbgl shaders
+
 function Scene() {
   const { gl, size } = useThree();
   const camera = useMemo(() => new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1), []);
@@ -21,7 +23,7 @@ function Scene() {
 
   const mouse = useRef({ x: 0, y: 0, px: 0, py: 0, down: false });
 
-  // create materials
+
   const fluidMaterial = useMemo(() => {
     return new THREE.ShaderMaterial({
       uniforms: {
@@ -60,7 +62,7 @@ function Scene() {
     });
   }, [size.width, size.height]);
 
-  // initialize render targets
+
   useEffect(() => {
     const params: THREE.RenderTargetOptions = {
       minFilter: THREE.LinearFilter,
@@ -122,20 +124,20 @@ function Scene() {
 
     (fluidMaterial.uniforms as any).iPreviousFrame.value = previousRef.current ? previousRef.current.texture : null;
 
-    // render simulation into current render target
+
     const simScene = new THREE.Scene();
     simScene.add(simMeshRef.current);
     gl.setRenderTarget(currentRef.current);
     gl.render(simScene, camera);
 
-    // render display to screen
+
     (displayMaterial.uniforms as any).iFluid.value = currentRef.current ? currentRef.current.texture : null;
     const dispScene = new THREE.Scene();
     dispScene.add(displayMeshRef.current);
     gl.setRenderTarget(null);
     gl.render(dispScene, camera);
 
-    // swap
+    
     const tmp = currentRef.current;
     currentRef.current = previousRef.current;
     previousRef.current = tmp;
@@ -143,7 +145,7 @@ function Scene() {
     frameCount.current++;
   }, 1);
 
-  // create meshes once
+
   useEffect(() => {
     const geom = new THREE.PlaneGeometry(2, 2);
     const simMesh = new THREE.Mesh(geom, fluidMaterial);
@@ -156,7 +158,7 @@ function Scene() {
       fluidMaterial.dispose();
       displayMaterial.dispose();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
   }, []);
 
   return null;

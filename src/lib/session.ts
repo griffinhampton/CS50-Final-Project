@@ -1,7 +1,9 @@
 import crypto from "crypto";
 
+//creates the real cookies and encrypts them w crypto, makes them last 7 days
+
 const SESSION_COOKIE_NAME = "session";
-const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 7; // 7 days
+const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 7; 
 
 export function getSessionCookieName() {
   return SESSION_COOKIE_NAME;
@@ -12,7 +14,7 @@ export function getSessionMaxAgeSeconds() {
 }
 
 export function generateSessionToken() {
-  // base64url is cookie-safe
+  
   return crypto.randomBytes(32).toString("base64url");
 }
 

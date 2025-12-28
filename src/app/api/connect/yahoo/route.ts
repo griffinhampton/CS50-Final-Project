@@ -3,6 +3,9 @@ import { NextResponse, type NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { getSessionUser } from "@/lib/auth";
 
+//went ahead and kinda added functionality here, just have to actually get the oauth perms from yahoo
+//made it for the gmail one and pasted it here
+
 export async function GET(req: NextRequest) {
 	const user = await getSessionUser(req);
 	if (!user) return NextResponse.redirect(new URL("/login", req.url));

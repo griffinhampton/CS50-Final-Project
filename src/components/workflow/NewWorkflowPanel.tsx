@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 
+//this is the panel that shows up when creating a new workflow, not the graph itself
+
 type WorkflowAction =
 	| { type: "gmailSend"; to: string; subject: string; bodyText: string }
 	| { type: "gmailEnsureLabel"; name: string };

@@ -1,3 +1,7 @@
+
+//determines type of workflow/workflows conditions, and exports what to do with them
+//used for node building
+
 export type WorkflowCondition =
 	| { type: "none" }
 	| { type: "emailContains"; value: string }
@@ -26,7 +30,6 @@ export type WorkflowGraphDefinition = {
 	nodes: Array<{
 		id: string;
 		kind: WorkflowNodeKind;
-		// Back-compat: older graphs stored a free-text condition.
 		condition?: WorkflowCondition | string;
 		config: Record<string, unknown>;
 	}>;

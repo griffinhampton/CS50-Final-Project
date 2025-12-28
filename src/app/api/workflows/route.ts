@@ -9,6 +9,8 @@ type CreateWorkflowBody = {
 	isActive?: boolean;
 };
 
+
+//creates and stringifys workflows so i can display them/come back to them later
 export async function GET(req: NextRequest) {
 	const user = await getSessionUser(req);
 	if (!user) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });

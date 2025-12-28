@@ -2,6 +2,13 @@ import { NextResponse } from 'next/server'
 import { NextRequest } from 'next/server'
 import { getSessionUser } from '@lib/auth'
 
+
+//this is the worst way to handle user authentication ever, i shouldve put the auth stuff in each file
+//dealing with this middleware has been a NIGHTMARE. the default routing just doesnt work for pages like /emails
+//so i had to micro manage it
+
+//anyways, confirms a user is an admin, or logged in
+
 export async function middleware(request: NextRequest) {
     const user = await getSessionUser(request);
     if (!user) {
@@ -14,7 +21,6 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/dashboard', request.url))
     }
     
-    // User is authenticated, allow the request to proceed
     return NextResponse.next()
 }
 

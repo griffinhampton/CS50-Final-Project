@@ -1,5 +1,8 @@
 "use client";
 
+//created with the heavy assistance of chatgpt (as i was running out of time at this point)
+// and also using xyflow react documentation
+
 import "@xyflow/react/dist/style.css";
 import React, { useEffect, useMemo, useState } from "react";
 import {

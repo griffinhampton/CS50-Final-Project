@@ -11,6 +11,8 @@ import {
   hashSessionToken,
 } from "@/lib/session";
 
+//zod+prisma schema verification, creates session cookies for the newly created user, if successful
+
 export async function POST(req: Request) {
   const body = await req.json();
   const parsed = registerSchema.safeParse(body);

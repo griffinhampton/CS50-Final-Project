@@ -2,6 +2,10 @@ import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/auth";
 
+//prevents users from having more than 10 workflows, this is to lower load on my dbs/server
+//also makes sure workflows have all the required fields before saving them, my last check before
+//saving workflows in my db
+
 type Params = { id: string };
 
 type PatchBody = {

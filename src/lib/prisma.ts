@@ -4,7 +4,8 @@ import { PrismaClient } from '../generated/prisma';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 
-// This prevents creating multiple instances of Prisma Client in development
+//creates pools for prisma for faster calls, limits pools as to not overload the server
+
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 const connectionString = process.env.DATABASE_URL;
@@ -14,8 +15,7 @@ if (!connectionString) {
     );
 }
 
-// In serverless (Vercel), keep pool sizes tiny to avoid exhausting managed Postgres poolers.
-// Override via PG_POOL_MAX if needed.
+
 const pool = new Pool({
     connectionString,
     max: Number(process.env.PG_POOL_MAX ?? '1'),
