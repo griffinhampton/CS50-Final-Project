@@ -16,7 +16,6 @@ async function cookieSetter(action:string, value?:string): Promise<ActionResult>
     const jar = await cookies()
     if(action==="set")
     {
-        //TODO: issue real session/JWT token
         jar.set('session', value || 'mock-token', {
             httpOnly: true,
             path: '/',
@@ -100,6 +99,3 @@ export async function logout(): Promise<ActionResult> {
     await cookieSetter("logout");
     return {ok: true}
 }
-// Server Actions for Authentication
-
-// TODO: Implement login, register, logout actions
