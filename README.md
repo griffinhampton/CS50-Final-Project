@@ -1,5 +1,5 @@
 # CS-50 EMAIL DASHBOARD
-## Video Demo: 
+## Video Demo: https://youtu.be/b5QaGdGOXpI 
 ## Description:
 What is the email dashboard?
 
